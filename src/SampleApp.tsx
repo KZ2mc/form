@@ -57,6 +57,11 @@ function App() {
       >
         press me
       </Button>
+      <ListGroup
+        items={items}
+        heading="Cities"
+        onSelectItem={handleSelectItem}
+      />
     </div>
   );
 }
