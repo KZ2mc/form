@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Calendar.css";
 
-const apiURL = "http://api.kz2movingcompany.com/schedule";
+const apiURL = "https://api.kz2movingcompany.com/schedule";
 
 interface CalendarProps {
   year: number;
