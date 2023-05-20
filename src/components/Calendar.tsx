@@ -8,8 +8,11 @@ interface CalendarProps {
   month: number;
 }
 
-const Calendar: React.FC<CalendarProps> = ({ year, month }) => {
+//const Calendar: React.FC<CalendarProps> = ({ year, month }) => {
+const Calendar: React.FC<CalendarProps> = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState(new Date().getMonth());
 
   const daysInMonth = (year: number, month: number) => {
     return new Date(year, month + 1, 0).getDate();
@@ -60,31 +63,23 @@ const Calendar: React.FC<CalendarProps> = ({ year, month }) => {
     ? mapFromJSON(JSON.stringify(data))
     : new Map<number, string>();
 
-  const convertToTitleCase = (input: string): string => {
-    const words = input.toLowerCase().split(" ");
-    const titleCaseWords = words.map(
-      (word) => word.charAt(0).toUpperCase() + word.slice(1)
-    );
-    return titleCaseWords.join(" ");
-  };
-
   const getDateAvailability = (
     date: number,
     month: number
   ): { dateStatus: string; style: string } => {
-    let style;
+    let style = "calendar-status ";
     let dateStatus = scheduleMap.get((month + 1) * 100 + date);
-    dateStatus =
-      dateStatus !== undefined ? convertToTitleCase(dateStatus) : "Available";
+    dateStatus = dateStatus !== undefined ? dateStatus : "Available";
     switch (dateStatus) {
       case "Available":
-        style = "text-bg-success p-3";
+        style += "available";
         break;
       case "Booked":
-        style = "text-bg-danger p-3";
+        style += "booked";
         break;
       default:
-        style = "text-bg-warning p-3";
+        style += "partially-available";
+        dateStatus = dateStatus.match("Evening") ? "Evening" : "Morning";
         break;
     }
     return { dateStatus, style };
@@ -92,7 +87,7 @@ const Calendar: React.FC<CalendarProps> = ({ year, month }) => {
 
   const renderCalendar = () => {
     const emptyCellClassName =
-      "calendar-day empty col border text-bg-light p-3";
+      "square-cell calendar-day empty col border text-bg-light";
 
     const totalDays = daysInMonth(year, month);
     const startDay = startDayOfMonth(year, month);
@@ -140,27 +135,33 @@ const Calendar: React.FC<CalendarProps> = ({ year, month }) => {
     for (let i = 0; i < startDay; i++) {
       calendarDays.push(
         <div key={`empty-${i}`} className={emptyCellClassName}>
-          <br></br>
-          <br></br>
-          <br></br>
+          <br />
+          <br />
+          <br />
         </div>
       );
     }
 
     // Render days for the current month
     for (let i = 1; i <= totalDays; i++) {
-      const date = new Date(year, month, i);
+      const date = new Date(year, month, i, 17); // Date becomes blank after the set time (24hr format)
       const isSelected = selectedDate?.toDateString() === date.toDateString();
 
       let calDay;
+      const todayStyle =
+        i === today.getDate() &&
+        month === today.getMonth() &&
+        year === today.getFullYear()
+          ? " current-date "
+          : "";
 
       if (date < today) {
         calDay = (
-          <div key={i} className={emptyCellClassName}>
+          <div key={i} className={`${todayStyle}${emptyCellClassName}`}>
             {i}
-            <br></br>
-            <br></br>
-            <br></br>
+            <br />
+            <br />
+            <br />
           </div>
         );
       } else {
@@ -168,14 +169,18 @@ const Calendar: React.FC<CalendarProps> = ({ year, month }) => {
         calDay = (
           <div
             key={i}
-            className={`calendar-day col border ${dateInfo.style} ${
-              isSelected ? "selected" : ""
+            className={`${todayStyle} ${emptyCellClassName} ${
+              isSelected ? " selected " : ""
             }`}
+            data-date={i}
             onClick={() => handleDateClick(date)}
           >
             {i}
-            <br></br>
-            {dateInfo.dateStatus}
+            <br />
+            <br />
+            <div className={`calendar-status ${dateInfo.style}`}>
+              {dateInfo.dateStatus}
+            </div>
           </div>
         );
       }
@@ -188,9 +193,9 @@ const Calendar: React.FC<CalendarProps> = ({ year, month }) => {
     for (let i = 0; i < endEmptyCells && endEmptyCells !== 7; i++) {
       calendarDays.push(
         <div key={`empty-end-${i}`} className={emptyCellClassName}>
-          <br></br>
-          <br></br>
-          <br></br>
+          <br />
+          <br />
+          <br />
         </div>
       );
     }
@@ -204,7 +209,10 @@ const Calendar: React.FC<CalendarProps> = ({ year, month }) => {
 
       if (week.length === 7) {
         weeks.push(
-          <div key={`week-${i / 7}`} className="calendar-week row no-gutters">
+          <div
+            key={`week-${i / 7}`}
+            className="calendar-week row row-cols-7 no-gutters"
+          >
             {week}
           </div>
         );
@@ -215,6 +223,46 @@ const Calendar: React.FC<CalendarProps> = ({ year, month }) => {
     return weeks;
   };
 
+  const getArrowButton = (direction: number) => {
+    const isPreviousDisabled =
+      direction < 0 &&
+      year === today.getFullYear() &&
+      month === today.getMonth();
+    const isNextDisabled =
+      direction > 0 &&
+      year === today.getFullYear() &&
+      month === today.getMonth() + 6;
+
+    const arrowClassDirection = direction < 0 ? "arrow-left" : "arrow-right";
+
+    const onClick = () => {
+      if (isPreviousDisabled || isNextDisabled) {
+        return; // Do nothing if the button is disabled
+      }
+
+      if (direction > 0) {
+        // Increase month
+        setMonth((prevMonth) => (prevMonth === 11 ? 0 : prevMonth + 1));
+        setYear((prevYear) => (month === 11 ? prevYear + 1 : prevYear));
+      } else {
+        // Decrease month
+        setMonth((prevMonth) => (prevMonth === 0 ? 11 : prevMonth - 1));
+        setYear((prevYear) => (month === 0 ? prevYear - 1 : prevYear));
+      }
+    };
+
+    const arrowClassName =
+      isPreviousDisabled || isNextDisabled
+        ? "disabled " + arrowClassDirection
+        : arrowClassDirection;
+
+    return (
+      <button className={`arrow-button ${arrowClassName}`} onClick={onClick}>
+        {direction < 0 ? "<" : ">"}
+      </button>
+    );
+  };
+
   const monthName = new Date(year, month).toLocaleString("en-US", {
     month: "long",
   });
@@ -222,15 +270,17 @@ const Calendar: React.FC<CalendarProps> = ({ year, month }) => {
   return (
     <div className="calendar text-center calendar-container">
       <div className="calendar-header ">
-        <h4>
+        <p>
           {data ? (
             <p>
+              {getArrowButton(-1)}
               {monthName} {year}
+              {getArrowButton(1)}
             </p>
           ) : (
             <p>Loading...</p>
           )}
-        </h4>
+        </p>
       </div>
       <div className="calendar-body">{renderCalendar()}</div>
     </div>
