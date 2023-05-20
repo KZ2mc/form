@@ -40,6 +40,10 @@
   transform: translateY(-50%);
 }
 
+.other-month {
+  opacity: 0.5;
+}
+
 .square-cell {
   height: 80px;
   font-size: 10px;

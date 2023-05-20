@@ -86,8 +86,10 @@ const Calendar: React.FC<CalendarProps> = () => {
   };
 
   const renderCalendar = () => {
-    const emptyCellClassName =
+    const cellClassName =
       "square-cell calendar-day empty col border text-bg-light";
+    const otherMonthCellClassName =
+      "square-cell calendar-day empty col border text-bg-light other-month";
 
     const totalDays = daysInMonth(year, month);
     const startDay = startDayOfMonth(year, month);
@@ -131,15 +133,56 @@ const Calendar: React.FC<CalendarProps> = () => {
       );
     }
 
-    // Render empty cells for previous month's days
-    for (let i = 0; i < startDay; i++) {
-      calendarDays.push(
-        <div key={`empty-${i}`} className={emptyCellClassName}>
-          <br />
-          <br />
-          <br />
-        </div>
+    // Render cells for previous month's days
+    const previousMonth = month === 0 ? 11 : month - 1;
+    const previousYear = month === 0 ? year - 1 : year;
+    const previousMonthDays = daysInMonth(previousYear, previousMonth);
+    for (let i = startDay - 1; i >= 0; i--) {
+      const date = new Date(
+        previousYear,
+        previousMonth,
+        previousMonthDays - i,
+        17
       );
+      const isSelected = selectedDate?.toDateString() === date.toDateString();
+      const dateInfo = getDateAvailability(
+        previousMonthDays - i,
+        previousMonth
+      );
+      let calDay;
+      const todayStyle =
+        previousMonthDays - i === today.getDate() &&
+        previousMonth === today.getMonth() &&
+        previousYear === today.getFullYear()
+          ? " current-date "
+          : "";
+
+      if (date < today) {
+        calDay = (
+          <div key={`prev-${i}`} className={otherMonthCellClassName}>
+            {previousMonthDays - i}
+            <br />
+            <br />
+            <br />
+          </div>
+        );
+      } else {
+        calDay = (
+          <div
+            key={`prev-${i}`}
+            className={`${todayStyle} ${otherMonthCellClassName}`}
+            data-date={previousMonthDays - i}
+          >
+            {previousMonthDays - i}
+            <br />
+            <br />
+            <div className={`calendar-status ${dateInfo.style}`}>
+              {dateInfo.dateStatus}
+            </div>
+          </div>
+        );
+      }
+      calendarDays.push(calDay);
     }
 
     // Render days for the current month
@@ -157,7 +200,7 @@ const Calendar: React.FC<CalendarProps> = () => {
 
       if (date < today) {
         calDay = (
-          <div key={i} className={`${todayStyle}${emptyCellClassName}`}>
+          <div key={i} className={`${todayStyle}${cellClassName}`}>
             {i}
             <br />
             <br />
@@ -169,7 +212,7 @@ const Calendar: React.FC<CalendarProps> = () => {
         calDay = (
           <div
             key={i}
-            className={`${todayStyle} ${emptyCellClassName} ${
+            className={`${todayStyle} ${cellClassName} ${
               isSelected ? " selected " : ""
             }`}
             data-date={i}
@@ -187,15 +230,30 @@ const Calendar: React.FC<CalendarProps> = () => {
       calendarDays.push(calDay);
     }
 
+    // Render cells for next month's days
+    const nextMonth = month === 11 ? 0 : month + 1;
+    const nextYear = month === 11 ? year + 1 : year;
+    const nextMonthDays = daysInMonth(nextYear, nextMonth);
     const endEmptyCells = 7 - (calendarDays.length % 7);
-
-    // Render empty cells for next month's days
     for (let i = 0; i < endEmptyCells && endEmptyCells !== 7; i++) {
+      const date = new Date(nextYear, nextMonth, i + 1, 17);
+      const isSelected = selectedDate?.toDateString() === date.toDateString();
+      const dateInfo = getDateAvailability(i + 1, nextMonth);
       calendarDays.push(
-        <div key={`empty-end-${i}`} className={emptyCellClassName}>
+        <div
+          key={`next-${i}`}
+          className={`${otherMonthCellClassName} ${
+            isSelected ? " selected " : ""
+          }`}
+          data-date={i + 1}
+          onClick={() => handleDateClick(date)}
+        >
+          {i + 1}
           <br />
           <br />
-          <br />
+          <div className={`calendar-status ${dateInfo.style}`}>
+            {dateInfo.dateStatus}
+          </div>
         </div>
       );
     }
