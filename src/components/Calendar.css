@@ -1,31 +1,32 @@
 .calendar-container {
-  padding-top: 20px;
-  width: 600px; /* Set the desired width */
+  padding-top: 1.25rem;
+  width: 37.5rem; /* Set the desired width */
   margin: 0 auto; /* Center the container horizontally */
 }
 
 .calendar-header {
   position: relative;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 
 .arrow-button {
-  width: 30px;
-  height: 30px;
+  width: 1.875rem;
+  height: 1.875rem;
   border-radius: 50%;
   background-color: #ffffff;
   border: none;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 20px;
+  font-size: 1.25rem;
   cursor: pointer;
 }
 
 .arrow-button:hover {
   background-color: #f0f0f0;
 }
+
 .arrow-left {
   position: absolute;
   top: 50%;
@@ -45,10 +46,10 @@
 }
 
 .square-cell {
-  height: 80px;
-  font-size: 10px;
+  height: 5rem;
+  font-size: 0.625rem;
   position: relative;
-  padding: 10px 5px 0 0 !important;
+  padding: 0.625rem 0.3125rem 0 0 !important;
 }
 
 .square-cell.current-date {
@@ -62,8 +63,8 @@
   top: 22%;
   left: 48%;
   transform: translate(-50%, -50%);
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: 50%;
   background-color: rgba(0, 119, 255, 0.3); /* Set the desired semi-transparent color */
   display: flex;
@@ -80,9 +81,9 @@
 
 .calendar-status {
   width: 95%;
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 1px;
+  font-size: 0.625rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.0625rem;
   overflow: hidden;
   text-overflow: ellipsis;
 }

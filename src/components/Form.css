@@ -1,0 +1,10 @@
+.form-container {
+    padding-top: 2rem;
+    width: 90%; /* Set the desired width */
+    max-width: 500px;
+    margin: 0 auto; /* Center the container horizontally */
+  }
+
+  .extra-small {
+    font-size: 0.8em !important;
+  }

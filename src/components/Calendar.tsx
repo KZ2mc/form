@@ -144,7 +144,7 @@ const Calendar: React.FC<CalendarProps> = () => {
         previousMonthDays - i,
         17
       );
-      const isSelected = selectedDate?.toDateString() === date.toDateString();
+      //const isSelected = selectedDate?.toDateString() === date.toDateString();
       const dateInfo = getDateAvailability(
         previousMonthDays - i,
         previousMonth
@@ -233,7 +233,7 @@ const Calendar: React.FC<CalendarProps> = () => {
     // Render cells for next month's days
     const nextMonth = month === 11 ? 0 : month + 1;
     const nextYear = month === 11 ? year + 1 : year;
-    const nextMonthDays = daysInMonth(nextYear, nextMonth);
+    //const nextMonthDays = daysInMonth(nextYear, nextMonth);
     const endEmptyCells = 7 - (calendarDays.length % 7);
     for (let i = 0; i < endEmptyCells && endEmptyCells !== 7; i++) {
       const date = new Date(nextYear, nextMonth, i + 1, 17);
