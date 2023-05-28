@@ -19,7 +19,7 @@ const HelpIcon: React.FC<HelpIconProps> = ({ helpMessage }) => {
   return (
     <div className="ms-2">
       <OverlayTrigger
-        trigger="hover"
+        trigger={["hover", "focus"]}
         placement="top"
         show={showPopover}
         onToggle={setShowPopover}

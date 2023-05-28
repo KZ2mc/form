@@ -1,0 +1,14 @@
+{
+    "overrides": [
+      {
+        "files": "*.tsx",
+        "options": {
+          "printWidth": 100,
+          "proseWrap": "always",
+          "jsxBracketSameLine": true,
+          "jsxSingleQuote": false
+        }
+      }
+    ]
+  }
+  
