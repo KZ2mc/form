@@ -1,13 +1,15 @@
 .calendar-container {
   padding-top: 1.25rem;
-  width: 37.5rem; /* Set the desired width */
+  max-width: 37.5rem; /* Set the desired width */
+  width: 90%;
   margin: 0 auto; /* Center the container horizontally */
 }
 
 .calendar-header {
   position: relative;
-  font-weight: bold;
-  font-size: 1.25rem;
+  flex-grow: 1; /* Allow the header to expand */
+  text-align: center;
+  max-width: 45% !important; 
 }
 
 .arrow-button {
@@ -21,28 +23,45 @@
   align-items: center;
   font-size: 1.25rem;
   cursor: pointer;
+  top: 50%;
+}
+
+.arrow-button.disabled {
+  opacity: 0.3;
+  pointer-events: none;
 }
 
 .arrow-button:hover {
   background-color: #f0f0f0;
 }
 
-.arrow-left {
-  position: absolute;
-  top: 50%;
-  left: 12rem;
-  transform: translateY(-50%);
-}
-
-.arrow-right {
-  position: absolute;
-  top: 50%;
-  right: 12rem;
-  transform: translateY(-50%);
-}
-
 .other-month {
   opacity: 0.5;
+}
+
+.weekday-cell {
+  position: relative;
+  box-sizing: border-box; /* Include padding in cell dimensions */
+  overflow: hidden;
+  font-size: 0.75rem;
+}
+
+.weekday {
+  display: inline-block;
+}
+
+.weekday-abbr {
+  display: none;
+}
+
+/* For smaller screens */
+@media (max-width: 576px) {
+  .weekday {
+    display: none;
+  }
+  .weekday-abbr {
+    display: inline-block;
+  }
 }
 
 .square-cell {
@@ -50,6 +69,8 @@
   font-size: 0.625rem;
   position: relative;
   padding: 0.625rem 0.3125rem 0 0 !important;
+  box-sizing: border-box; /* Include padding in cell dimensions */
+  overflow: hidden;
 }
 
 .square-cell.current-date {

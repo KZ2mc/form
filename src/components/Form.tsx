@@ -1,22 +1,32 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Modal, OverlayTrigger, Popover } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import states from "states-us";
 import "./Form.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import HelpIcon from "./HelpIcon";
+// If i later decide to use React Hook Form instead
+//import { useForm } from "react-hook-form";
+//import { yupResolver } from "@hookform/resolvers/yup";
+//import * as yup from "yup";
 
-const apiURL = "https://api.kz2movingcompany.com:8443/validate_address";
+const addressValidationApiURL = "https://api.kz2movingcompany.com:8443/validate_address";
+const formSubmissionApiURL = "https://api.kz2movingcompany.com:8443/form_submission";
 const defaultStateCode = "CA";
 let addresses: string[] = [];
+let curInd = 0;
+const smallMoves = ["Few items", "Studio", "1-bedroom", "Small storage"];
+let pickupAddress = "";
+let stopOneAddress = "";
+let stopTwoAddress = "";
+let destAddress = "";
 
 const Form: React.FC = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const form = [];
 
   // Supplemental:
-  const [responseString, setResponseString] = useState("");
-  const [currentAddressIndex, setCurrentAddressIndex] = useState(0);
+  const [chosenAddressString, setChosenAddressString] = useState("");
   const [showModal, setShowModal] = useState(false);
 
   // User Data Block:
@@ -25,14 +35,7 @@ const Form: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
 
-  const [truck, setTruck] = useState(true);
-  const [packing, setPacking] = useState(false);
-  const [moveSize, setMoveSize] = useState("");
-  const [recomMovers, setRecomMovers] = useState(0);
-  const [defaultMovers, setDefaultMovers] = useState(true);
-
   // Pickup Block:
-  const [pickupAddress, setPickupAddress] = useState("");
   const [pickupStreetAddress, setPickupStreetAddress] = useState("");
   const [pickupStreetAddress2, setPickupStreetAddress2] = useState("");
   const [pickupCity, setPickupCity] = useState("");
@@ -44,7 +47,6 @@ const Form: React.FC = () => {
 
   // Stop One Block:
   const [stopOne, setStopOne] = useState(false);
-  const [stopOneAddress, setStopOneAddress] = useState("");
   const [stopOneStreetAddress, setStopOneStreetAddress] = useState("");
   const [stopOneStreetAddress2, setStopOneStreetAddress2] = useState("");
   const [stopOneCity, setStopOneCity] = useState("");
@@ -53,7 +55,6 @@ const Form: React.FC = () => {
 
   // Stop Two Block:
   const [stopTwo, setStopTwo] = useState(false);
-  const [stopTwoAddress, setStopTwoAddress] = useState("");
   const [stopTwoStreetAddress, setStopTwoStreetAddress] = useState("");
   const [stopTwoStreetAddress2, setStopTwoStreetAddress2] = useState("");
   const [stopTwoCity, setStopTwoCity] = useState("");
@@ -61,7 +62,6 @@ const Form: React.FC = () => {
   const [stopTwoZipCode, setStopTwoZipCode] = useState("");
 
   // Destination Block:
-  const [destAddress, setDestAddress] = useState("");
   const [destStreetAddress, setDestStreetAddress] = useState("");
   const [destStreetAddress2, setDestStreetAddress2] = useState("");
   const [destCity, setDestCity] = useState("");
@@ -74,60 +74,95 @@ const Form: React.FC = () => {
   // Heavy items block:
   const [selectedHeavyItems, setSelectedHeavyItems] = useState<string[]>([]);
   const [inputHeavyDetails, setHeavyDetails] = useState("");
+  const [largeMove, setLargeMove] = useState(false);
+
+  // Size & Sevrices block:
+  const [truck, setTruck] = useState(true);
+  const [packing, setPacking] = useState(false);
+  const [moveSize, setMoveSize] = useState("");
+  const [recomMovers, setRecomMovers] = useState(0);
+  const [defaultMovers, setDefaultMovers] = useState(true);
+  const [selectedMovers, setSelectedMovers] = useState({ recomMovers } + " movers");
 
   // Date and Time Block:
-  const [evnTime1, setEvnTime1] = useState(false);
-  const [exactTime1, setExactTime1] = useState(false);
-  const [evnTime2, setEvnTime2] = useState(false);
-  const [exactTime2, setExactTime2] = useState(false);
-  const [evnTime3, setEvnTime3] = useState(false);
-  const [exactTime3, setExactTime3] = useState(false);
+  const [date1, setDate1] = useState("");
+  const [timeSlot1, setTimeSlot1] = useState("");
+  const [evnTimeFlag1, setEvnTimeFlag1] = useState(false);
+  const [evnTime1, setEvnTime1] = useState("");
+  const [exactTimeFlag1, setExactTimeFlag1] = useState(false);
+  const [exactTime1, setExactTime1] = useState("");
 
-  const packDataToJson = () => {
+  const [date2, setDate2] = useState("");
+  const [timeSlot2, setTimeSlot2] = useState("");
+  const [evnTimeFlag2, setEvnTimeFlag2] = useState(false);
+  const [evnTime2, setEvnTime2] = useState("");
+  const [exactTimeFlag2, setExactTimeFlag2] = useState(false);
+  const [exactTime2, setExactTime2] = useState("");
+
+  const [date3, setDate3] = useState("");
+  const [timeSlot3, setTimeSlot3] = useState("");
+  const [evnTimeFlag3, setEvnTimeFlag3] = useState(false);
+  const [evnTime3, setEvnTime3] = useState("");
+  const [exactTimeFlag3, setExactTimeFlag3] = useState(false);
+  const [exactTime3, setExactTime3] = useState("");
+
+  // Additional Info:
+  const [addInfo, setAddInfo] = useState("");
+
+  const wrapAndSubmit = async () => {
     const data = {
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      phoneNumber: phoneNumber,
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
       addresses: {
         pickupAddress,
         stopOneAddress,
         stopTwoAddress,
         destAddress,
       },
-      selectedHeavyItems: selectedHeavyItems,
-      inputHeavyDetails,
+      pickupFloorSelector,
+      pickupElevatorCheck,
+      pickupLongWalkCheck,
+      destFloorSelector,
+      destElevatorCheck,
+      destLongWalkCheck,
+      moveSize,
       truck,
       packing,
-      moveSize,
-      recomMovers,
+      selectedHeavyItems,
+      inputHeavyDetails,
       defaultMovers,
+      selectedMovers,
+      date1,
+      timeSlot1,
+      evnTime1,
+      exactTime1,
+      date2,
+      timeSlot2,
+      evnTime2,
+      exactTime2,
+      date3,
+      timeSlot3,
+      evnTime3,
+      exactTime3,
+      addInfo,
     };
 
-    const jsonData = JSON.stringify(data);
-    console.log(jsonData); // Use this JSON data for submitting over the API
-  };
-
-  const validateAddress = async (address: string) => {
-    console.log("validateAddress is called for " + address);
-    const requestBody = {
-      id: "stub",
-      address: address,
-    };
+    console.log(JSON.stringify(data)); // Use this JSON data for submitting over the API
 
     try {
-      const response = await fetch(apiURL, {
+      const response = await fetch(formSubmissionApiURL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify(data),
       });
 
       if (response.ok) {
         const responseData = await response.text();
-        setResponseString(responseData);
-        return responseData;
+        console.log("Received API response: " + responseData);
       } else {
         console.error("Request failed with status:", response.status);
         return "error";
@@ -138,27 +173,35 @@ const Form: React.FC = () => {
     }
   };
 
-  const addressSetter = (i: number, value: string) => {
-    addresses[i] = value;
-    switch (i) {
-      case 0:
-        setPickupAddress(value);
-        break;
-      case 1:
-        if (addresses.length === 2 || addresses.length === 3) {
-          setDestAddress(value);
-        } else {
-          setStopOneAddress(value);
-        }
-        break;
-      case 2:
-        setStopTwoAddress(value);
-        break;
-      case 3:
-        setDestAddress(value);
-        break;
-      default:
-        break;
+  const validateAddress = async (address: string) => {
+    console.log("validateAddress is called for " + address);
+    const requestBody = {
+      id: "stub",
+      address: address,
+    };
+
+    try {
+      const response = await fetch(addressValidationApiURL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (response.ok) {
+        const responseData = await response.text();
+        console.log("Received API response: " + responseData);
+        const result = JSON.parse(responseData);
+        setChosenAddressString(result.formattedAddress);
+        return result;
+      } else {
+        console.error("Request failed with status:", response.status);
+        return "error";
+      }
+    } catch (error) {
+      console.error("Request failed:", error);
+      return "error";
     }
   };
 
@@ -172,69 +215,102 @@ const Form: React.FC = () => {
     if (submittedForm && (e === null || submittedForm.checkValidity())) {
       // All fields are properly filled, verify the address and submit.
 
-      // Valid address format STRICTLY: "607 Carmel, Pacifica, CA 94044"
-      if (addresses.length === 0) {
-        addresses = [
-          `${pickupStreetAddress}${
-            pickupStreetAddress2 ? ` ${pickupStreetAddress2},` : ","
-          } ${pickupCity}, ${pickupState} ${pickupZipCode}`,
-          stopOne
-            ? `${stopOneStreetAddress}${
-                stopOneStreetAddress2 ? ` ${stopOneStreetAddress2},` : ","
-              } ${stopOneCity}, ${stopOneState} ${stopOneZipCode}`
-            : "",
-          stopTwo
-            ? `${stopTwoStreetAddress}${
-                stopTwoStreetAddress2 ? ` ${stopTwoStreetAddress2},` : ","
-              } ${stopTwoCity}, ${stopTwoState} ${stopTwoZipCode}`
-            : "",
-          `${destStreetAddress}${
-            destStreetAddress2 ? ` ${destStreetAddress2},` : ","
-          } ${destCity}, ${destState} ${destZipCode}`,
-        ].filter(Boolean);
-      }
+      // Valid address format STRICTLY: "250 Montana Street, San Francisco, CA 94112"
+      addresses = [
+        `${pickupStreetAddress}${
+          pickupStreetAddress2 ? ` ${pickupStreetAddress2},` : ","
+        } ${pickupCity}, ${pickupState} ${pickupZipCode}`,
+        stopOne
+          ? `${stopOneStreetAddress}${
+              stopOneStreetAddress2 ? ` ${stopOneStreetAddress2},` : ","
+            } ${stopOneCity}, ${stopOneState} ${stopOneZipCode}`
+          : "",
+        stopTwo
+          ? `${stopTwoStreetAddress}${
+              stopTwoStreetAddress2 ? ` ${stopTwoStreetAddress2},` : ","
+            } ${stopTwoCity}, ${stopTwoState} ${stopTwoZipCode}`
+          : "",
+        `${destStreetAddress}${
+          destStreetAddress2 ? ` ${destStreetAddress2},` : ","
+        } ${destCity}, ${destState} ${destZipCode}`,
+      ].filter(Boolean);
 
       // Reset the current address index and hide the modal
       setShowModal(false);
 
       // Iterate over the addresses and validate them
-      for (let i = 0; i < addresses.length; i++) {
+      for (let i = curInd; i < addresses.length; i++) {
         const currentAddress = addresses[i];
-        const correctedAddress = await validateAddress(currentAddress);
-        console.log("input: " + currentAddress);
-        console.log("corAdd: " + correctedAddress);
-        console.log(correctedAddress === currentAddress);
-        console.log(addresses);
+        const result = await validateAddress(currentAddress);
 
-        // If the address is invalid, show the modal and exit the loop
-        if (correctedAddress === currentAddress) {
-          addressSetter(i, correctedAddress);
+        if (result === "error") {
+          console.log("An error occured. Couldn't confirm the address");
+          await addressSetter(currentAddress);
         } else {
-          setCurrentAddressIndex(i);
-          setShowModal(true);
-          break;
-        }
-        // "error" or "null case " ?
+          // Access the values in the response object
+          const verdict = result.verdict;
+          const formattedAddress = result.formattedAddress;
 
+          console.log("input: " + currentAddress);
+          console.log("corAdd: " + formattedAddress);
+          console.log("Equal? " + (formattedAddress === currentAddress));
+          console.log("currentAddressIndex: " + curInd);
+          console.log(addresses);
+
+          // If the address is invalid, show the modal and exit the loop
+          if (verdict === "ok") {
+            await addressSetter(formattedAddress);
+          } else {
+            setShowModal(true);
+            break;
+          }
+          // "error" or "null case " ?
+        }
         // If the last address is valid and all addresses have been validated,
         // you can proceed with the desired action (e.g., making an API request)
-        if (i === addresses.length - 1) {
+        if (curInd === addresses.length) {
           // Make the API request or perform other actions
           console.log("Validation COMPLETE!");
-          submittedForm.submit();
+          wrapAndSubmit();
         }
       }
     }
   };
 
-  const handleModalResponse = (currentAddressIndex: number, response: string) => {
+  const handleModalResponse = (response: string) => {
     // Update the address fields based on the user's response
-    addressSetter(currentAddressIndex, response);
+    addressSetter(response);
 
     // Hide the modal and continue validating the remaining addresses
-    setShowModal(false);
-    setCurrentAddressIndex(currentAddressIndex + 1);
     validateSubmission(null);
+  };
+
+  const addressSetter = async (value: string) => {
+    addresses[curInd] = value;
+    switch (curInd) {
+      case 0:
+        pickupAddress = value;
+        break;
+      case 1:
+        if (addresses.length === 2 || addresses.length === 3) {
+          destAddress = value;
+        } else {
+          stopOneAddress = value;
+        }
+        break;
+      case 2:
+        stopTwoAddress = value;
+        break;
+      case 3:
+        destAddress = value;
+        break;
+      default:
+        console.log(`Error: ${curInd} doesn't match any case`);
+        break;
+    }
+    console.log(`AddressSetter is here! Updating index from ${curInd}`);
+    curInd++;
+    console.log("to: " + curInd);
   };
 
   const handleHeavyItemsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -271,6 +347,14 @@ const Form: React.FC = () => {
     return phoneNumber;
   };
 
+  const updateMoveSize = (value: string) => {
+    setMoveSize(value);
+    if (!smallMoves.includes(value)) {
+      setLargeMove(true);
+    } else {
+      setLargeMove(false);
+    }
+  };
   useEffect(() => {
     // Update the value of moversSelector based on the changed fields
     let recommendedMovers = 0;
@@ -316,14 +400,17 @@ const Form: React.FC = () => {
     const id = e.currentTarget.id;
 
     if (id === "time-selector-1") {
-      setExactTime1(selectedValue === "Exact");
-      setEvnTime1(selectedValue === "Evening");
+      setTimeSlot1(selectedValue);
+      setExactTimeFlag1(selectedValue === "Exact");
+      setEvnTimeFlag1(selectedValue === "Evening");
     } else if (id === "time-selector-2") {
-      setExactTime2(selectedValue === "Exact");
-      setEvnTime2(selectedValue === "Evening");
+      setTimeSlot2(selectedValue);
+      setExactTimeFlag2(selectedValue === "Exact");
+      setEvnTimeFlag2(selectedValue === "Evening");
     } else if (id === "time-selector-3") {
-      setExactTime3(selectedValue === "Exact");
-      setEvnTime3(selectedValue === "Evening");
+      setTimeSlot3(selectedValue);
+      setExactTimeFlag3(selectedValue === "Exact");
+      setEvnTimeFlag3(selectedValue === "Evening");
     }
   };
 
@@ -340,7 +427,7 @@ const Form: React.FC = () => {
   const nameField = (
     <div className="row g-2" key="name-field">
       <div className="col">
-        <label htmlFor="first-name-field" className="form-label fw-bold">
+        <label htmlFor="first-name-field" className="d-flex form-label fw-bold">
           First Name
         </label>
         <input
@@ -356,7 +443,7 @@ const Form: React.FC = () => {
       </div>
 
       <div className="col">
-        <label htmlFor="last-name-field" className="form-label fw-bold">
+        <label htmlFor="last-name-field" className="d-flex form-label fw-bold">
           Last name
         </label>
         <input
@@ -378,7 +465,7 @@ const Form: React.FC = () => {
       <br />
       <div className="row g-2">
         <div className="col mb-3">
-          <label htmlFor="email-field" className="form-label fw-bold">
+          <label htmlFor="email-field" className="d-flex form-label fw-bold">
             Email
           </label>
           <input
@@ -392,13 +479,10 @@ const Form: React.FC = () => {
             aria-label="Email field"
             required
           />
-          <div id="data-help" className="form-text extra-small">
-            We'll never share your data.
-          </div>
           <div className="invalid-feedback">Please provide a valid email.</div>
         </div>
         <div className="col form-group">
-          <label htmlFor="phone-field" className="form-label fw-bold">
+          <label htmlFor="phone-field" className="d-flex form-label fw-bold">
             Phone
           </label>
           <input
@@ -425,9 +509,11 @@ const Form: React.FC = () => {
 
   const pickupAddressFields = (
     <div key="pickup-address-fields" id="pickup-block">
-      <label htmlFor="pickup-address" className="form-label fw-bold">
-        Pickup address:
-      </label>
+      <div className="d-flex align-items-center justify-content-between">
+        <label htmlFor="pickup-address" className="form-label fw-bold">
+          Pickup address:
+        </label>
+      </div>
       <div className="row g-2">
         <div className="col-12">
           <input
@@ -452,7 +538,7 @@ const Form: React.FC = () => {
             aria-label="Pickup apartment, unit, or office field"
           />
         </div>
-        <div className="col-md-7">
+        <div className="col-lg-7 col-md-7 col-sm-6 col-6">
           <input
             type="text"
             className="form-control"
@@ -464,7 +550,7 @@ const Form: React.FC = () => {
             required
           />
         </div>
-        <div className="col-md-2">
+        <div className="col-lg-2 col-md-2 col-sm-3 col-3">
           <select
             id="pickup-state"
             className="form-select"
@@ -475,7 +561,7 @@ const Form: React.FC = () => {
             {stateOptions}
           </select>
         </div>
-        <div className="col-md-3">
+        <div className="col-lg-3 col-md-3 col-sm-3 col-3">
           <input
             type="text"
             id="pickup-zip-code"
@@ -488,6 +574,7 @@ const Form: React.FC = () => {
             required
           />
         </div>
+
         <div className="row g-1 ms-0">
           <div className="col-md-6">
             <select
@@ -564,7 +651,7 @@ const Form: React.FC = () => {
   const additionalStopOne = stopOne && (
     <div key="additional-stop-one-fields" id="stop-one-block">
       <br />
-      <div className="d-flex align-items-center justify-content-between">
+      <div className="d-flex justify-content-between">
         <label htmlFor="stop-one-address" className="form-label fw-bold">
           Stop One address:
         </label>
@@ -604,7 +691,7 @@ const Form: React.FC = () => {
             aria-label="Stop one apartment, unit, or office field"
           />
         </div>
-        <div className="col-md-7">
+        <div className="col-lg-7 col-md-7 col-sm-6 col-6">
           <input
             type="text"
             className="form-control"
@@ -616,7 +703,7 @@ const Form: React.FC = () => {
             required
           />
         </div>
-        <div className="col-md-2">
+        <div className="col-lg-2 col-md-2 col-sm-3 col-3">
           <select
             id="stop-one-state"
             className="form-select"
@@ -627,7 +714,7 @@ const Form: React.FC = () => {
             {stateOptions}
           </select>
         </div>
-        <div className="col-md-3">
+        <div className="col-lg-3 col-md-3 col-sm-3 col-3">
           <input
             type="text"
             id="stop-one-zip-code"
@@ -664,7 +751,7 @@ const Form: React.FC = () => {
   const additionalStopTwo = stopTwo && (
     <div key="additional-stop-two-fields" id="stop-two-block">
       <br />
-      <div className="d-flex align-items-center justify-content-between">
+      <div className="d-flex justify-content-between">
         <label htmlFor="stop-two-address" className="form-label fw-bold">
           Stop Two address:
         </label>
@@ -702,7 +789,7 @@ const Form: React.FC = () => {
             aria-label="Stop two apartment, unit, or office field"
           />
         </div>
-        <div className="col-md-7">
+        <div className="col-lg-7 col-md-7 col-sm-6 col-6">
           <input
             type="text"
             className="form-control"
@@ -713,7 +800,7 @@ const Form: React.FC = () => {
             required
           />
         </div>
-        <div className="col-md-2">
+        <div className="col-lg-2 col-md-2 col-sm-3 col-3">
           <select
             id="stop-two-state"
             className="form-select"
@@ -724,7 +811,7 @@ const Form: React.FC = () => {
             {stateOptions}
           </select>
         </div>
-        <div className="col-md-3">
+        <div className="col-lg-3 col-md-3 col-sm-3 col-3">
           <input
             type="text"
             id="stop-two-code"
@@ -744,9 +831,11 @@ const Form: React.FC = () => {
   const destAddressFields = (
     <div key="dropoff-address-fields">
       <br />
-      <label htmlFor="dest-address" className="form-label fw-bold">
-        Destination address:
-      </label>
+      <div className="d-flex">
+        <label htmlFor="dest-address" className="form-label fw-bold">
+          Destination address:
+        </label>
+      </div>
       <div className="row g-2" id="dest-block">
         <div className="col-12">
           <input
@@ -771,7 +860,7 @@ const Form: React.FC = () => {
             aria-label="Destination apartment, unit, or office field"
           />
         </div>
-        <div className="col-md-7">
+        <div className="col-lg-7 col-md-7 col-sm-6 col-6">
           <input
             type="text"
             className="form-control"
@@ -783,7 +872,7 @@ const Form: React.FC = () => {
             required
           />
         </div>
-        <div className="col-md-2">
+        <div className="col-lg-2 col-md-2 col-sm-3 col-3">
           <select
             id="dest-state"
             className="form-select"
@@ -794,7 +883,7 @@ const Form: React.FC = () => {
             {stateOptions}
           </select>
         </div>
-        <div className="col-md-3">
+        <div className="col-lg-3 col-md-3 col-sm-3 col-3">
           <input
             id="dest-zip-code"
             value={destZipCode}
@@ -867,14 +956,13 @@ const Form: React.FC = () => {
   const optionsSelector = (
     <div key="options-selector-key" id="options-selector-block">
       <br />
-      <label className="form-check-label fw-bold mb-2" htmlFor="size-selector">
+      <label className="d-flex form-check-label fw-bold mb-2" htmlFor="size-selector">
         Move size & required services:
       </label>
       <div className="row g-2 d-flex align-items-center">
-        <div id="options-help" className="form-text extra-small mt-0">
-          Not sure which one to choose? Check out{" "}
+        <div id="options-help" className="text-start form-text extra-small mt-0">
+          Not sure which one to choose? Check out our{" "}
           <a href="https://www.kz2movingcompany.com/post/how-to-estimate-your-move-size">Guide</a>{" "}
-          for help
         </div>
         <div className="row g-1 ms-0">
           <div className="col-md-6" id="options-selector">
@@ -883,11 +971,11 @@ const Form: React.FC = () => {
                 className="col form-select"
                 id="size-selector"
                 aria-label="Size of your move selector"
-                onInput={(e) => setMoveSize(e.currentTarget.value)}
+                onInput={(e) => updateMoveSize(e.currentTarget.value)}
                 defaultValue=""
                 required>
                 <option value="" disabled>
-                  Size of your move ...
+                  Size of your move...
                 </option>
                 <option value="Few items">Few items</option>
                 <option value="Studio">Studio</option>
@@ -949,7 +1037,7 @@ const Form: React.FC = () => {
     <div key="heavy-items" id="heavy-check">
       <br />
       <label
-        className="form-check-label fw-bold d-flex align-items-center"
+        className="text-start form-check-label fw-bold d-flex align-items-center"
         htmlFor="piano-check"
         aria-describedby="heavy-help">
         Extra Heavy (300+ lb) or Oversized items:
@@ -957,13 +1045,13 @@ const Form: React.FC = () => {
           <HelpIcon helpMessage="Such items usually require 4 movers. Most TVs, mattresses, couches, dressers, washers, fridges, and treadmills are considered regular items." />
         </span>
       </label>
-      <div id="heavy-help" className="form-text extra-small mt-0">
+      <div id="heavy-help" className="text-start form-text extra-small mt-0">
         May be charged extra. See <a href="https://www.kz2movingcompany.com/prices">Prices</a> for
         more information
       </div>
 
       <div className="row g-2 align-items-center" id="heavy-check">
-        <div className="col d-flex flex-column">
+        <div className="col d-flex">
           <div className="form-check">
             <input
               className="form-check-input"
@@ -972,13 +1060,13 @@ const Form: React.FC = () => {
               onChange={handleHeavyItemsChange}
               aria-label="Piano check box"
             />
-            <label className="form-check-label" htmlFor="piano-check">
+            <label className="form-check-label ml-2" htmlFor="piano-check">
               Piano
             </label>
           </div>
         </div>
 
-        <div className="col d-flex flex-column">
+        <div className="col d-flex">
           <div className="form-check">
             <input
               className="form-check-input"
@@ -987,13 +1075,13 @@ const Form: React.FC = () => {
               onChange={handleHeavyItemsChange}
               aria-label="Gun safe check box"
             />
-            <label className="form-check-label text-nowrap" htmlFor="gun-safe-check">
+            <label className="form-check-label text-nowrap ml-2" htmlFor="gun-safe-check">
               Gun Safe
             </label>
           </div>
         </div>
 
-        <div className="col d-flex flex-column">
+        <div className="col d-flex">
           <div className="form-check">
             <input
               className="form-check-input"
@@ -1002,7 +1090,7 @@ const Form: React.FC = () => {
               onChange={handleHeavyItemsChange}
               aria-label="Other heavy item check box"
             />
-            <label className="form-check-label" htmlFor="other-heavy-check">
+            <label className="form-check-label ml-2" htmlFor="other-heavy-check">
               Other
             </label>
           </div>
@@ -1028,10 +1116,10 @@ const Form: React.FC = () => {
   const numMoversSelector = (
     <div key="num-movers-key" id="num-movers-selector">
       <br />
-      <label className="form-check-label fw-bold" htmlFor="recom-num-movers">
+      <label className="d-flex form-check-label fw-bold" htmlFor="recom-num-movers">
         Number of movers:
       </label>
-      <div className="col">
+      <div className="d-flex col">
         <div className="form-check">
           <input
             className="form-check-input"
@@ -1041,7 +1129,7 @@ const Form: React.FC = () => {
             onChange={(e) => setDefaultMovers(e.target.checked)}
             aria-label="Proceed with recommended number of movers checkbox"
           />
-          <label className="form-check-label" htmlFor="recom-num-movers">
+          <label className="text-start form-check-label" htmlFor="recom-num-movers">
             Let KZ2 decide the most suitable team-size (Recommended)
           </label>
         </div>
@@ -1051,43 +1139,77 @@ const Form: React.FC = () => {
           className="form-select"
           aria-label="Select number of movers"
           key="num-movers-selector-key"
-          defaultValue="">
+          value={selectedMovers}
+          onInput={(e) => setSelectedMovers(e.currentTarget.value)}>
           <option value="" disabled>
             How many movers do you need...
           </option>
-          <option value="2">2 movers {recomMovers === 2 ? "(Recommended)" : ""}</option>
-          <option value="3">3 movers {recomMovers === 3 ? "(Recommended)" : ""}</option>
-          <option value="4">4 movers {recomMovers === 4 ? "(Recommended)" : ""}</option>
-          <option value="5">5 movers {recomMovers === 5 ? "(Recommended)" : ""}</option>
-          <option value="6">6 movers {recomMovers === 6 ? "(Recommended)" : ""}</option>
-          <option value="7">I will specify at the end of the form</option>
+          <option value="2 movers">2 movers {recomMovers === 2 ? "(Recommended)" : ""}</option>
+          <option value="3 movers">3 movers {recomMovers === 3 ? "(Recommended)" : ""}</option>
+          <option value="4 movers">4 movers {recomMovers === 4 ? "(Recommended)" : ""}</option>
+          <option value="5 movers">5 movers {recomMovers === 5 ? "(Recommended)" : ""}</option>
+          <option value="6 movers">6 movers {recomMovers === 6 ? "(Recommended)" : ""}</option>
+          <option value="Custom">I will specify at the end of the form</option>
         </select>
       )}
+    </div>
+  );
+
+  const largeMoveWarning = largeMove && (
+    <div className="row g-2 ">
+      <div className="col-auto text-danger text-start">
+        <strong>Note:</strong>
+      </div>
+      <div className="col d-flex text-danger text-start">
+        For larger moves, we strongly recommend starting as early as as possible
+      </div>
+    </div>
+  );
+
+  const evnTimeNote = (
+    <div className="row g-2 ">
+      <div className="col-auto text-start">
+        <strong>Note:</strong>
+      </div>
+      <div className="col d-flex text-start">The team might become available before 3 PM</div>
+    </div>
+  );
+
+  const exactTimeNote = (
+    <div className="row g-2 ">
+      <div className="col-auto text-start">
+        <strong>Note:</strong>
+      </div>
+      <div className="col d-flex text-start">
+        Selecting time around noon is not advised as it limits our ability to serve other customers
+      </div>
     </div>
   );
 
   const movingDates = (
     <div key="moving-dates-block-key" className="g-2">
       <br />
-      <label htmlFor="date-1" className="form-check-label fw-bold">
+      <label htmlFor="date-1" className="d-flex form-check-label fw-bold">
         Preferred Dates & Times:
       </label>
       <div id="dates-block-1" className="row g-2 align-items-center mt-1">
         <label htmlFor="date-1" className="col-md-3 text-center">
           1st choice:
         </label>
-        <div className="col-md-4">
+        <div className="col-md-4 col-6">
           <input
             type="date"
             id="date-1"
             className="form-control"
             min={minDate}
             max={maxDate}
+            value={date1}
+            onChange={(e) => setDate1(e.target.value)}
             required
           />
         </div>
 
-        <div className="col-md-5" id="time-selector">
+        <div className="col-md-5 col-6" id="time-selector">
           <select
             className="col form-select"
             id="time-selector-1"
@@ -1096,7 +1218,7 @@ const Form: React.FC = () => {
             onInput={(e) => handleTimeChange(e)}
             required>
             <option value="" disabled>
-              Select start time ...
+              Start time
             </option>
             <option value="Flexible time">Flexible time</option>
             <option value="Morning">Morning (8-10 AM)</option>
@@ -1104,32 +1226,41 @@ const Form: React.FC = () => {
             <option value="Exact">Exact (Not advised)</option>
           </select>
         </div>
-        {exactTime1 && (
+        {exactTimeFlag1 && (
           <div
             key="ex-note-1"
             className="col-md-12 alert alert-primary align-items-center me-3"
             role="alert">
-            <p>
-              <strong>Note:</strong> Selecting time around noon is not advised as it limits our
-              ability to serve other customers
-            </p>
+            {exactTimeNote}
+            {largeMoveWarning}
             <p>
               <label htmlFor="exact-time-1">Preferred Time:</label>
-              <input className="ms-2" type="time" id="exact-time-1" />
+              <input
+                className="ms-2"
+                type="time"
+                id="exact-time-1"
+                value={exactTime1}
+                onChange={(e) => setExactTime1(e.target.value)}
+              />
             </p>
           </div>
         )}
-        {evnTime1 && (
+        {evnTimeFlag1 && (
           <div
             key="evn-note-1"
             className="col-md-12 alert alert-primary align-items-center me-3"
             role="alert">
-            <p>
-              <strong>Note:</strong> The team might become available before 3 PM
-            </p>
+            {evnTimeNote}
+            {largeMoveWarning}
             <p>
               <label htmlFor="evn-time-1">What is the earliest time we can start:</label>
-              <input className="ms-2" type="time" id="evn-time-1" />
+              <input
+                className="ms-2"
+                type="time"
+                id="evn-time-1"
+                value={evnTime1}
+                onChange={(e) => setEvnTime1(e.target.value)}
+              />
             </p>
           </div>
         )}
@@ -1142,11 +1273,19 @@ const Form: React.FC = () => {
             <span className="form-text mt-0 extra-small text-center">(Optional)</span>
           </label>
         </div>
-        <div className="col-md-4">
-          <input type="date" id="date-2" className="form-control" min={minDate} max={maxDate} />
+        <div className="col-md-4 col-6">
+          <input
+            type="date"
+            id="date-2"
+            className="form-control"
+            min={minDate}
+            max={maxDate}
+            value={date2}
+            onChange={(e) => setDate2(e.target.value)}
+          />
         </div>
 
-        <div className="col-md-5" id="time-selector-two">
+        <div className="col-md-5 col-6" id="time-selector-two">
           <select
             className="col form-select"
             id="time-selector-2"
@@ -1154,7 +1293,7 @@ const Form: React.FC = () => {
             defaultValue=""
             onInput={(e) => handleTimeChange(e)}>
             <option value="" disabled>
-              Select start time ...
+              Start time
             </option>
             <option value="Flexible time">Flexible time</option>
             <option value="Morning">Morning (8-10 AM)</option>
@@ -1162,32 +1301,41 @@ const Form: React.FC = () => {
             <option value="Exact">Exact (Not advised)</option>
           </select>
         </div>
-        {exactTime2 && (
+        {exactTimeFlag2 && (
           <div
             key="ex-note-2"
             className="col-md-12 alert alert-primary align-items-center me-3"
             role="alert">
-            <p>
-              <strong>Note:</strong> Selecting time around noon is not advised as it limits our
-              ability to serve other customers
-            </p>
+            {exactTimeNote}
+            {largeMoveWarning}
             <p>
               <label htmlFor="ex-time-2">Preferred Time:</label>
-              <input className="ms-2" type="time" id="ex-time-2" />
+              <input
+                className="ms-2"
+                type="time"
+                id="ex-time-2"
+                value={exactTime2}
+                onChange={(e) => setExactTime2(e.target.value)}
+              />
             </p>
           </div>
         )}
-        {evnTime2 && (
+        {evnTimeFlag2 && (
           <div
             key="evn-note-2"
             className="col-md-12 alert alert-primary align-items-center me-3"
             role="alert">
-            <p>
-              <strong>Note:</strong> The team might become available before 3 PM
-            </p>
+            {evnTimeNote}
+            {largeMoveWarning}
             <p>
               <label htmlFor="evn-time-2">What is the earliest time we can start:</label>
-              <input className="ms-2" type="time" id="evn-time-2" />
+              <input
+                className="ms-2"
+                type="time"
+                id="evn-time-2"
+                value={evnTime2}
+                onChange={(e) => setEvnTime2(e.target.value)}
+              />
             </p>
           </div>
         )}
@@ -1200,11 +1348,19 @@ const Form: React.FC = () => {
             <span className="form-text mt-0 extra-small text-center">(Optional)</span>
           </label>
         </div>
-        <div className="col-md-4">
-          <input type="date" id="date-3" className="form-control" min={minDate} max={maxDate} />
+        <div className="col-md-4 col-6">
+          <input
+            type="date"
+            id="date-3"
+            className="form-control"
+            min={minDate}
+            max={maxDate}
+            value={date3}
+            onChange={(e) => setDate3(e.target.value)}
+          />
         </div>
 
-        <div className="col-md-5" id="time-selector-three">
+        <div className="col-md-5 col-6" id="time-selector-three">
           <select
             className="col form-select"
             id="time-selector-3"
@@ -1212,7 +1368,7 @@ const Form: React.FC = () => {
             defaultValue=""
             onInput={(e) => handleTimeChange(e)}>
             <option value="" disabled>
-              Select start time ...
+              Start time
             </option>
             <option value="Flexible time">Flexible time</option>
             <option value="Morning">Morning (8-10 AM)</option>
@@ -1220,32 +1376,41 @@ const Form: React.FC = () => {
             <option value="Exact">Exact (Not advised)</option>
           </select>
         </div>
-        {exactTime3 && (
+        {exactTimeFlag3 && (
           <div
             key="ex-note-3"
             className="col-md-12 alert alert-primary align-items-center me-3"
             role="alert">
-            <p>
-              <strong>Note:</strong> Selecting time around noon is not advised as it limits our
-              ability to serve other customers
-            </p>
+            {exactTimeNote}
+            {largeMoveWarning}
             <p>
               <label htmlFor="ex-time-3">Preferred Time:</label>
-              <input className="ms-2" type="time" id="ex-time-3" />
+              <input
+                className="ms-2"
+                type="time"
+                id="ex-time-3"
+                value={exactTime3}
+                onChange={(e) => setExactTime3(e.target.value)}
+              />
             </p>
           </div>
         )}
-        {evnTime3 && (
+        {evnTimeFlag3 && (
           <div
             key="evn-note-3"
             className="col-md-12 alert alert-primary align-items-center me-3"
             role="alert">
-            <p>
-              <strong>Note:</strong> The team might become available before 3 PM
-            </p>
+            {evnTimeNote}
+            {largeMoveWarning}
             <p>
               <label htmlFor="evn-time-3">What is the earliest time we can start:</label>
-              <input className="ms-2" type="time" id="evn-time-3" />
+              <input
+                className="ms-2"
+                type="time"
+                id="evn-time-3"
+                value={evnTime3}
+                onChange={(e) => setEvnTime3(e.target.value)}
+              />
             </p>
           </div>
         )}
@@ -1256,7 +1421,7 @@ const Form: React.FC = () => {
   const additionalInfo = (
     <div key="additional-info-block">
       <br />
-      <label htmlFor="additional-info" className="form-check-label fw-bold mb-1">
+      <label htmlFor="additional-info" className="d-flex form-check-label fw-bold mb-1">
         Additional Information:
       </label>
       <textarea
@@ -1264,7 +1429,9 @@ const Form: React.FC = () => {
         className="form-control"
         rows={3}
         placeholder="Anything else we should know..."
-        aria-label="Additional information field"></textarea>
+        aria-label="Additional information field"
+        value={addInfo}
+        onChange={(e) => setAddInfo(e.target.value)}></textarea>
     </div>
   );
 
@@ -1278,7 +1445,7 @@ const Form: React.FC = () => {
       </svg>
 
       <div
-        className="alert alert-primary d-flex flex-column align-items-start me-3 w-100"
+        className="alert alert-primary d-flex flex-column align-items-center me-3 w-100"
         role="alert">
         <div className="d-flex align-items-center">
           <svg
@@ -1290,16 +1457,19 @@ const Form: React.FC = () => {
             <use xlinkHref="#info-fill" />
           </svg>
 
-          <p className="m-0">
+          <p className="m-0 text-start">
             <strong>Attention!</strong> Your move is not confirmed until you receive a confirmation
             via email. Be sure to check your spam.
           </p>
         </div>
         <div className="mt-2">
-          <p className="m-0">
+          <p className="m-0 text-start">
             This is a non-binding moving service request form. While we do our best to serve you,
             availability may vary.
           </p>
+        </div>
+        <div className="mt-2">
+          <p className="m-0 text-start">We will never share your information with third parties.</p>
         </div>
         <div className="form-check mt-2">
           <input className="form-check-input" type="checkbox" id="confirmation-checkbox" required />
@@ -1328,8 +1498,8 @@ const Form: React.FC = () => {
               <div className="card h-100 alert alert-secondary text-center">
                 <p className="mb-0">Your input:</p>
                 <br />
-                {addresses[currentAddressIndex] &&
-                  addresses[currentAddressIndex]
+                {addresses[curInd] &&
+                  addresses[curInd]
                     .split(",")
                     .map((part, index) => <div key={index}>{part.trim()}</div>)}
               </div>
@@ -1338,13 +1508,13 @@ const Form: React.FC = () => {
               <div className="card h-100 alert alert-primary text-center">
                 <p className="mb-0">Recommended:</p>
                 <br />
-                {responseString &&
-                  responseString.split(",").map((part, index) => {
+                {chosenAddressString &&
+                  chosenAddressString.split(",").map((part, index) => {
                     const trimmedPart = part.trim();
                     const mismatch =
-                      addresses[currentAddressIndex] &&
-                      addresses[currentAddressIndex].split(",")[index].trim() !== trimmedPart;
-                    const userSubparts = addresses[currentAddressIndex]
+                      addresses[curInd] &&
+                      addresses[curInd].split(",")[index].trim() !== trimmedPart;
+                    const userSubparts = addresses[curInd]
                       ?.split(",")
                       // eslint-disable-next-line no-unexpected-multiline
                       [index]?.trim()
@@ -1370,11 +1540,7 @@ const Form: React.FC = () => {
         <div className="container text-center">
           <div className="row align-items-stretch d-flex g-2">
             <div className="col">
-              <Button
-                variant="secondary"
-                onClick={() =>
-                  handleModalResponse(currentAddressIndex, addresses[currentAddressIndex])
-                }>
+              <Button variant="secondary" onClick={() => handleModalResponse(addresses[curInd])}>
                 Keep Original
               </Button>
             </div>
@@ -1382,7 +1548,7 @@ const Form: React.FC = () => {
               <Button
                 className="text-nowrap"
                 variant="primary"
-                onClick={() => handleModalResponse(currentAddressIndex, responseString)}>
+                onClick={() => handleModalResponse(chosenAddressString)}>
                 Use Formatted
               </Button>
             </div>

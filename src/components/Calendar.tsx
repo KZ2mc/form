@@ -59,9 +59,7 @@ const Calendar: React.FC<CalendarProps> = () => {
   };
 
   // Usage
-  const scheduleMap = data
-    ? mapFromJSON(JSON.stringify(data))
-    : new Map<number, string>();
+  const scheduleMap = data ? mapFromJSON(JSON.stringify(data)) : new Map<number, string>();
 
   const getDateAvailability = (
     date: number,
@@ -86,8 +84,7 @@ const Calendar: React.FC<CalendarProps> = () => {
   };
 
   const renderCalendar = () => {
-    const cellClassName =
-      "square-cell calendar-day empty col border text-bg-light";
+    const cellClassName = "square-cell calendar-day empty col border text-bg-light";
     const otherMonthCellClassName =
       "square-cell calendar-day empty col border text-bg-light other-month";
 
@@ -126,9 +123,13 @@ const Calendar: React.FC<CalendarProps> = () => {
           dayName = "Unknown";
           break;
       }
+      const isSmallScreen = window.innerWidth <= 576;
+      const abbreviatedDayName = isSmallScreen ? dayName.charAt(0) : dayName;
+
       calendarDays.push(
-        <div key={dayName} className="col">
-          {dayName}
+        <div key={dayName} className="col weekday-cell">
+          <div className="weekday weekday-abbr">{abbreviatedDayName}</div>
+          <div className="weekday weekday-full">{dayName}</div>
         </div>
       );
     }
@@ -138,17 +139,9 @@ const Calendar: React.FC<CalendarProps> = () => {
     const previousYear = month === 0 ? year - 1 : year;
     const previousMonthDays = daysInMonth(previousYear, previousMonth);
     for (let i = startDay - 1; i >= 0; i--) {
-      const date = new Date(
-        previousYear,
-        previousMonth,
-        previousMonthDays - i,
-        17
-      );
+      const date = new Date(previousYear, previousMonth, previousMonthDays - i, 17);
       //const isSelected = selectedDate?.toDateString() === date.toDateString();
-      const dateInfo = getDateAvailability(
-        previousMonthDays - i,
-        previousMonth
-      );
+      const dateInfo = getDateAvailability(previousMonthDays - i, previousMonth);
       let calDay;
       const todayStyle =
         previousMonthDays - i === today.getDate() &&
@@ -171,14 +164,11 @@ const Calendar: React.FC<CalendarProps> = () => {
           <div
             key={`prev-${i}`}
             className={`${todayStyle} ${otherMonthCellClassName}`}
-            data-date={previousMonthDays - i}
-          >
+            data-date={previousMonthDays - i}>
             {previousMonthDays - i}
             <br />
             <br />
-            <div className={`calendar-status ${dateInfo.style}`}>
-              {dateInfo.dateStatus}
-            </div>
+            <div className={`calendar-status ${dateInfo.style}`}>{dateInfo.dateStatus}</div>
           </div>
         );
       }
@@ -192,9 +182,7 @@ const Calendar: React.FC<CalendarProps> = () => {
 
       let calDay;
       const todayStyle =
-        i === today.getDate() &&
-        month === today.getMonth() &&
-        year === today.getFullYear()
+        i === today.getDate() && month === today.getMonth() && year === today.getFullYear()
           ? " current-date "
           : "";
 
@@ -212,18 +200,13 @@ const Calendar: React.FC<CalendarProps> = () => {
         calDay = (
           <div
             key={i}
-            className={`${todayStyle} ${cellClassName} ${
-              isSelected ? " selected " : ""
-            }`}
+            className={`${todayStyle} ${cellClassName} ${isSelected ? " selected " : ""}`}
             data-date={i}
-            onClick={() => handleDateClick(date)}
-          >
+            onClick={() => handleDateClick(date)}>
             {i}
             <br />
             <br />
-            <div className={`calendar-status ${dateInfo.style}`}>
-              {dateInfo.dateStatus}
-            </div>
+            <div className={`calendar-status ${dateInfo.style}`}>{dateInfo.dateStatus}</div>
           </div>
         );
       }
@@ -242,18 +225,13 @@ const Calendar: React.FC<CalendarProps> = () => {
       calendarDays.push(
         <div
           key={`next-${i}`}
-          className={`${otherMonthCellClassName} ${
-            isSelected ? " selected " : ""
-          }`}
+          className={`${otherMonthCellClassName} ${isSelected ? " selected " : ""}`}
           data-date={i + 1}
-          onClick={() => handleDateClick(date)}
-        >
+          onClick={() => handleDateClick(date)}>
           {i + 1}
           <br />
           <br />
-          <div className={`calendar-status ${dateInfo.style}`}>
-            {dateInfo.dateStatus}
-          </div>
+          <div className={`calendar-status ${dateInfo.style}`}>{dateInfo.dateStatus}</div>
         </div>
       );
     }
@@ -267,10 +245,7 @@ const Calendar: React.FC<CalendarProps> = () => {
 
       if (week.length === 7) {
         weeks.push(
-          <div
-            key={`week-${i / 7}`}
-            className="calendar-week row row-cols-7 no-gutters"
-          >
+          <div key={`week-${i / 7}`} className="calendar-week row no-gutters">
             {week}
           </div>
         );
@@ -283,13 +258,9 @@ const Calendar: React.FC<CalendarProps> = () => {
 
   const getArrowButton = (direction: number) => {
     const isPreviousDisabled =
-      direction < 0 &&
-      year === today.getFullYear() &&
-      month === today.getMonth();
+      direction < 0 && year === today.getFullYear() && month === today.getMonth();
     const isNextDisabled =
-      direction > 0 &&
-      year === today.getFullYear() &&
-      month === today.getMonth() + 6;
+      direction > 0 && year === today.getFullYear() && month === today.getMonth() + 6;
 
     const arrowClassDirection = direction < 0 ? "arrow-left" : "arrow-right";
 
@@ -327,18 +298,16 @@ const Calendar: React.FC<CalendarProps> = () => {
 
   return (
     <div className="calendar text-center calendar-container">
-      <div className="calendar-header ">
-        <p>
-          {data ? (
-            <p>
-              {getArrowButton(-1)}
-              {monthName} {year}
-              {getArrowButton(1)}
-            </p>
-          ) : (
-            <p>Loading...</p>
-          )}
-        </p>
+      <div className="row align-items-center justify-content-center">
+        <div className="col-auto">{getArrowButton(-1)}</div>
+        {data ? (
+          <div className="col calendar-header">
+            {monthName} {year}
+          </div>
+        ) : (
+          <p>Loading...</p>
+        )}
+        <div className="col-auto">{getArrowButton(1)}</div>
       </div>
       <div className="calendar-body">{renderCalendar()}</div>
     </div>
