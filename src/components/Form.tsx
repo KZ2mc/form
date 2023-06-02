@@ -1,10 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Element, scroller } from "react-scroll";
 import { Button, Modal } from "react-bootstrap";
 import states from "states-us";
 import "./Form.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faClock } from "@fortawesome/free-solid-svg-icons";
 import HelpIcon from "./HelpIcon";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { setHours, setMinutes } from "date-fns";
+
 // If i later decide to use React Hook Form instead
 //import { useForm } from "react-hook-form";
 //import { yupResolver } from "@hookform/resolvers/yup";
@@ -15,7 +20,14 @@ const formSubmissionApiURL = "https://api.kz2movingcompany.com:8443/form_submiss
 const defaultStateCode = "CA";
 let addresses: string[] = [];
 let curInd = 0;
-const smallMoves = ["Few items", "Studio", "1-bedroom", "Small storage"];
+const eightAM = setHours(setMinutes(new Date(), 0), 8);
+const threePM = setHours(setMinutes(new Date(), 0), 15);
+const timeFormatOptions: Intl.DateTimeFormatOptions = {
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: true,
+};
+const smallMoves = ["Few items", "Studio", "1-bedroom", "Small storage", "Medium Storage"];
 let pickupAddress = "";
 let stopOneAddress = "";
 let stopTwoAddress = "";
@@ -23,9 +35,12 @@ let destAddress = "";
 
 const Form: React.FC = () => {
   const formRef = useRef<HTMLFormElement>(null);
+  const formContainerRef = useRef<HTMLDivElement | null>(null);
   const form = [];
 
   // Supplemental:
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [chosenAddressString, setChosenAddressString] = useState("");
   const [showModal, setShowModal] = useState(false);
 
@@ -82,29 +97,29 @@ const Form: React.FC = () => {
   const [moveSize, setMoveSize] = useState("");
   const [recomMovers, setRecomMovers] = useState(0);
   const [defaultMovers, setDefaultMovers] = useState(true);
-  const [selectedMovers, setSelectedMovers] = useState({ recomMovers } + " movers");
+  const [selectedMovers, setSelectedMovers] = useState("2 movers");
 
   // Date and Time Block:
   const [date1, setDate1] = useState("");
   const [timeSlot1, setTimeSlot1] = useState("");
   const [evnTimeFlag1, setEvnTimeFlag1] = useState(false);
-  const [evnTime1, setEvnTime1] = useState("");
+  const [evnTime1, setEvnTime1] = useState(threePM);
   const [exactTimeFlag1, setExactTimeFlag1] = useState(false);
-  const [exactTime1, setExactTime1] = useState("");
+  const [exactTime1, setExactTime1] = useState(eightAM);
 
   const [date2, setDate2] = useState("");
   const [timeSlot2, setTimeSlot2] = useState("");
   const [evnTimeFlag2, setEvnTimeFlag2] = useState(false);
-  const [evnTime2, setEvnTime2] = useState("");
+  const [evnTime2, setEvnTime2] = useState(threePM);
   const [exactTimeFlag2, setExactTimeFlag2] = useState(false);
-  const [exactTime2, setExactTime2] = useState("");
+  const [exactTime2, setExactTime2] = useState(eightAM);
 
   const [date3, setDate3] = useState("");
   const [timeSlot3, setTimeSlot3] = useState("");
   const [evnTimeFlag3, setEvnTimeFlag3] = useState(false);
-  const [evnTime3, setEvnTime3] = useState("");
+  const [evnTime3, setEvnTime3] = useState(threePM);
   const [exactTimeFlag3, setExactTimeFlag3] = useState(false);
-  const [exactTime3, setExactTime3] = useState("");
+  const [exactTime3, setExactTime3] = useState(eightAM);
 
   // Additional Info:
   const [addInfo, setAddInfo] = useState("");
@@ -115,12 +130,10 @@ const Form: React.FC = () => {
       lastName,
       email,
       phoneNumber,
-      addresses: {
-        pickupAddress,
-        stopOneAddress,
-        stopTwoAddress,
-        destAddress,
-      },
+      pickupAddress,
+      stopOneAddress,
+      stopTwoAddress,
+      destAddress,
       pickupFloorSelector,
       pickupElevatorCheck,
       pickupLongWalkCheck,
@@ -136,16 +149,17 @@ const Form: React.FC = () => {
       selectedMovers,
       date1,
       timeSlot1,
-      evnTime1,
-      exactTime1,
+      evnTime1: evnTime1.toLocaleTimeString([], timeFormatOptions),
+      exactTime1: exactTime1.toLocaleTimeString([], timeFormatOptions),
       date2,
       timeSlot2,
-      evnTime2,
-      exactTime2,
+      evnTime2: evnTime2.toLocaleTimeString([], timeFormatOptions),
+
+      exactTime2: exactTime2.toLocaleTimeString([], timeFormatOptions),
       date3,
       timeSlot3,
-      evnTime3,
-      exactTime3,
+      evnTime3: evnTime3.toLocaleTimeString([], timeFormatOptions),
+      exactTime3: exactTime3.toLocaleTimeString([], timeFormatOptions),
       addInfo,
     };
 
@@ -163,6 +177,7 @@ const Form: React.FC = () => {
       if (response.ok) {
         const responseData = await response.text();
         console.log("Received API response: " + responseData);
+        setIsSubmitted(true);
       } else {
         console.error("Request failed with status:", response.status);
         return "error";
@@ -170,6 +185,8 @@ const Form: React.FC = () => {
     } catch (error) {
       console.error("Request failed:", error);
       return "error";
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -207,6 +224,7 @@ const Form: React.FC = () => {
 
   // The value of null represents a recursive call. No need to validate the fields
   const validateSubmission = async (e: React.FormEvent<HTMLFormElement> | null) => {
+    setIsSubmitting(true);
     if (e) {
       e.preventDefault();
     }
@@ -258,7 +276,7 @@ const Form: React.FC = () => {
           console.log(addresses);
 
           // If the address is invalid, show the modal and exit the loop
-          if (verdict === "ok") {
+          if (verdict === "ok" || formattedAddress === currentAddress) {
             await addressSetter(formattedAddress);
           } else {
             setShowModal(true);
@@ -266,13 +284,13 @@ const Form: React.FC = () => {
           }
           // "error" or "null case " ?
         }
-        // If the last address is valid and all addresses have been validated,
-        // you can proceed with the desired action (e.g., making an API request)
-        if (curInd === addresses.length) {
-          // Make the API request or perform other actions
-          console.log("Validation COMPLETE!");
-          wrapAndSubmit();
-        }
+      }
+      // If the last address is valid and all addresses have been validated,
+      // you can proceed with the desired action (e.g., making an API request)
+      if (curInd === addresses.length) {
+        // Make the API request or perform other actions
+        console.log("Validation COMPLETE!");
+        wrapAndSubmit();
       }
     }
   };
@@ -355,21 +373,19 @@ const Form: React.FC = () => {
       setLargeMove(false);
     }
   };
+
   useEffect(() => {
     // Update the value of moversSelector based on the changed fields
     let recommendedMovers = 0;
 
     if (
       selectedHeavyItems.length === 0 &&
-      (moveSize === "Few items" ||
-        moveSize === "Studio" ||
-        moveSize === "Small Storage" ||
-        moveSize === "Medium Storage" ||
+      ((moveSize !== "1-bedroom" && smallMoves.includes(moveSize)) ||
         (moveSize === "1-bedroom" && !packing))
     ) {
       recommendedMovers = 2;
     } else {
-      if (moveSize === "3-bedroom" || selectedHeavyItems.length > 0) {
+      if (moveSize === "3-bedroom") {
         recommendedMovers = 4;
       } else if (moveSize === "1-bedroom") {
         recommendedMovers = 2;
@@ -382,8 +398,21 @@ const Form: React.FC = () => {
         recommendedMovers += 1;
       }
     }
+    if (selectedHeavyItems.length > 0) {
+      recommendedMovers = Math.max(recommendedMovers, 4);
+    }
     setRecomMovers(recommendedMovers);
   }, [moveSize, packing, selectedHeavyItems]);
+
+  useEffect(() => {
+    if (isSubmitted && formContainerRef.current) {
+      scroller.scrollTo("thankYouMessage", {
+        duration: 500,
+        smooth: true,
+        offset: -100, // Adjust the offset as needed
+      });
+    }
+  }, [isSubmitted]);
 
   const currentDate = new Date();
   const minDate = currentDate.toISOString().split("T")[0];
@@ -1233,16 +1262,22 @@ const Form: React.FC = () => {
             role="alert">
             {exactTimeNote}
             {largeMoveWarning}
-            <p>
-              <label htmlFor="exact-time-1">Preferred Time:</label>
-              <input
-                className="ms-2"
-                type="time"
-                id="exact-time-1"
-                value={exactTime1}
-                onChange={(e) => setExactTime1(e.target.value)}
+            <div className="form-group">
+              <label htmlFor="ex-time-1">Preferred Time:</label>
+              <DatePicker
+                id="ex-time-1"
+                selected={exactTime1}
+                onChange={(date) => date && setExactTime1(date)}
+                showTimeSelect
+                showTimeSelectOnly
+                minTime={setHours(setMinutes(new Date(), 0), 6)}
+                maxTime={setHours(setMinutes(new Date(), 0), 20)}
+                timeCaption="Time"
+                timeIntervals={30}
+                dateFormat="h:mm aa"
+                required
               />
-            </p>
+            </div>
           </div>
         )}
         {evnTimeFlag1 && (
@@ -1252,16 +1287,22 @@ const Form: React.FC = () => {
             role="alert">
             {evnTimeNote}
             {largeMoveWarning}
-            <p>
+            <div className="form-group">
               <label htmlFor="evn-time-1">What is the earliest time we can start:</label>
-              <input
-                className="ms-2"
-                type="time"
+              <DatePicker
                 id="evn-time-1"
-                value={evnTime1}
-                onChange={(e) => setEvnTime1(e.target.value)}
+                selected={evnTime1}
+                onChange={(date) => date && setEvnTime1(date)}
+                showTimeSelect
+                showTimeSelectOnly
+                minTime={setHours(setMinutes(new Date(), 0), 6)}
+                maxTime={setHours(setMinutes(new Date(), 0), 20)}
+                timeCaption="Time"
+                timeIntervals={30}
+                dateFormat="h:mm aa"
+                required
               />
-            </p>
+            </div>
           </div>
         )}
       </div>
@@ -1310,12 +1351,18 @@ const Form: React.FC = () => {
             {largeMoveWarning}
             <p>
               <label htmlFor="ex-time-2">Preferred Time:</label>
-              <input
-                className="ms-2"
-                type="time"
+              <DatePicker
                 id="ex-time-2"
-                value={exactTime2}
-                onChange={(e) => setExactTime2(e.target.value)}
+                selected={exactTime2}
+                onChange={(date) => date && setExactTime2(date)}
+                showTimeSelect
+                showTimeSelectOnly
+                minTime={setHours(setMinutes(new Date(), 0), 6)}
+                maxTime={setHours(setMinutes(new Date(), 0), 20)}
+                timeCaption="Time"
+                timeIntervals={30}
+                dateFormat="h:mm aa"
+                required
               />
             </p>
           </div>
@@ -1329,12 +1376,18 @@ const Form: React.FC = () => {
             {largeMoveWarning}
             <p>
               <label htmlFor="evn-time-2">What is the earliest time we can start:</label>
-              <input
-                className="ms-2"
-                type="time"
+              <DatePicker
                 id="evn-time-2"
-                value={evnTime2}
-                onChange={(e) => setEvnTime2(e.target.value)}
+                selected={evnTime2}
+                onChange={(date) => date && setEvnTime2(date)}
+                showTimeSelect
+                showTimeSelectOnly
+                minTime={setHours(setMinutes(new Date(), 0), 6)}
+                maxTime={setHours(setMinutes(new Date(), 0), 20)}
+                timeCaption="Time"
+                timeIntervals={30}
+                dateFormat="h:mm aa"
+                required
               />
             </p>
           </div>
@@ -1357,6 +1410,7 @@ const Form: React.FC = () => {
             max={maxDate}
             value={date3}
             onChange={(e) => setDate3(e.target.value)}
+            required
           />
         </div>
 
@@ -1385,12 +1439,18 @@ const Form: React.FC = () => {
             {largeMoveWarning}
             <p>
               <label htmlFor="ex-time-3">Preferred Time:</label>
-              <input
-                className="ms-2"
-                type="time"
+              <DatePicker
                 id="ex-time-3"
-                value={exactTime3}
-                onChange={(e) => setExactTime3(e.target.value)}
+                selected={exactTime3}
+                onChange={(date) => date && setExactTime3(date)}
+                showTimeSelect
+                showTimeSelectOnly
+                minTime={setHours(setMinutes(new Date(), 0), 6)}
+                maxTime={setHours(setMinutes(new Date(), 0), 20)}
+                timeCaption="Time"
+                timeIntervals={30}
+                dateFormat="h:mm aa"
+                required
               />
             </p>
           </div>
@@ -1404,12 +1464,18 @@ const Form: React.FC = () => {
             {largeMoveWarning}
             <p>
               <label htmlFor="evn-time-3">What is the earliest time we can start:</label>
-              <input
-                className="ms-2"
-                type="time"
+              <DatePicker
                 id="evn-time-3"
-                value={evnTime3}
-                onChange={(e) => setEvnTime3(e.target.value)}
+                selected={evnTime3}
+                onChange={(date) => date && setEvnTime3(date)}
+                showTimeSelect
+                showTimeSelectOnly
+                minTime={setHours(setMinutes(new Date(), 0), 6)}
+                maxTime={setHours(setMinutes(new Date(), 0), 20)}
+                timeCaption="Time"
+                timeIntervals={30}
+                dateFormat="h:mm aa"
+                required
               />
             </p>
           </div>
@@ -1478,8 +1544,8 @@ const Form: React.FC = () => {
       </div>
 
       <div className="col-12 text-center mb-3">
-        <button type="submit" className="btn btn-primary">
-          Submit Reservation Request
+        <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Submit Reservation Request"}
         </button>
       </div>
     </div>
@@ -1575,13 +1641,17 @@ const Form: React.FC = () => {
 
   // custom validation temporarily not available. Add noValidate to className when it's fixed
   return (
-    <form
-      key="form"
-      ref={formRef}
-      onSubmit={validateSubmission}
-      className="form-container needs-validation">
-      {form}
-    </form>
+    <div className="form-container" ref={formContainerRef}>
+      {isSubmitted ? (
+        <Element name="thankYouMessage" className="alert alert-success" role="alert">
+          Thank you for your submission! We will get back to you shortly
+        </Element>
+      ) : (
+        <form key="form" ref={formRef} onSubmit={validateSubmission} className="needs-validation">
+          {form}
+        </form>
+      )}
+    </div>
   );
 };
 
