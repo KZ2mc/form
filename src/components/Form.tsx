@@ -23,11 +23,11 @@ let curInd = 0;
 const eightAM = setHours(setMinutes(new Date(), 0), 8);
 const threePM = setHours(setMinutes(new Date(), 0), 15);
 const timeFormatOptions: Intl.DateTimeFormatOptions = {
-  hour: "2-digit",
+  hour: "numeric",
   minute: "2-digit",
   hour12: true,
 };
-const smallMoves = ["Few items", "Studio", "1-bedroom", "Small storage", "Medium Storage"];
+const smallMoves = ["Few items", "Studio", "1-br", "Small storage", "Medium Storage"];
 let pickupAddress = "";
 let stopOneAddress = "";
 let stopTwoAddress = "";
@@ -42,6 +42,7 @@ const Form: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [chosenAddressString, setChosenAddressString] = useState("");
+  const [invalidAddressString, setInvalidAddressString] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
   // User Data Block:
@@ -124,11 +125,14 @@ const Form: React.FC = () => {
   // Additional Info:
   const [addInfo, setAddInfo] = useState("");
 
+  const capitalizeName = (input: string): string =>
+    input ? input.trim().charAt(0).toLocaleUpperCase() + input.slice(1).toLocaleLowerCase() : "";
+
   const wrapAndSubmit = async () => {
     const data = {
-      firstName,
-      lastName,
-      email,
+      firstName: capitalizeName(firstName),
+      lastName: capitalizeName(lastName),
+      email: email.trim().toLowerCase(),
       phoneNumber,
       pickupAddress,
       stopOneAddress,
@@ -191,7 +195,7 @@ const Form: React.FC = () => {
   };
 
   const validateAddress = async (address: string) => {
-    console.log("validateAddress is called for " + address);
+    console.log("DEBUG: validateAddress is called for " + address);
     const requestBody = {
       id: "stub",
       address: address,
@@ -208,7 +212,7 @@ const Form: React.FC = () => {
 
       if (response.ok) {
         const responseData = await response.text();
-        console.log("Received API response: " + responseData);
+        console.log("DEBUG: Received API response: " + responseData);
         const result = JSON.parse(responseData);
         setChosenAddressString(result.formattedAddress);
         return result;
@@ -235,21 +239,21 @@ const Form: React.FC = () => {
 
       // Valid address format STRICTLY: "250 Montana Street, San Francisco, CA 94112"
       addresses = [
-        `${pickupStreetAddress}${
-          pickupStreetAddress2 ? ` ${pickupStreetAddress2},` : ","
+        `${pickupStreetAddress.trim()}${
+          pickupStreetAddress2 ? `, ${pickupStreetAddress2.trim()},` : ","
         } ${pickupCity}, ${pickupState} ${pickupZipCode}`,
         stopOne
-          ? `${stopOneStreetAddress}${
-              stopOneStreetAddress2 ? ` ${stopOneStreetAddress2},` : ","
+          ? `${stopOneStreetAddress.trim()}${
+              stopOneStreetAddress2 ? `, ${stopOneStreetAddress2.trim()},` : ","
             } ${stopOneCity}, ${stopOneState} ${stopOneZipCode}`
           : "",
         stopTwo
-          ? `${stopTwoStreetAddress}${
-              stopTwoStreetAddress2 ? ` ${stopTwoStreetAddress2},` : ","
+          ? `${stopTwoStreetAddress.trim()}${
+              stopTwoStreetAddress2 ? `, ${stopTwoStreetAddress2.trim()},` : ","
             } ${stopTwoCity}, ${stopTwoState} ${stopTwoZipCode}`
           : "",
-        `${destStreetAddress}${
-          destStreetAddress2 ? ` ${destStreetAddress2},` : ","
+        `${destStreetAddress.trim()}${
+          destStreetAddress2 ? `, ${destStreetAddress2.trim()},` : ","
         } ${destCity}, ${destState} ${destZipCode}`,
       ].filter(Boolean);
 
@@ -276,13 +280,20 @@ const Form: React.FC = () => {
           console.log(addresses);
 
           // If the address is invalid, show the modal and exit the loop
-          if (verdict === "ok" || formattedAddress === currentAddress) {
+          if (verdict === "ok") {
             await addressSetter(formattedAddress);
+          } else if (verdict === "hasUnconfirmedComponents") {
+            // The address is bad and can't be fixed
+            setChosenAddressString(
+              "We couldn't find this address.\nPlease, make sure it's correct."
+            );
+            setInvalidAddressString(true);
+            setShowModal(true);
+            break;
           } else {
             setShowModal(true);
             break;
           }
-          // "error" or "null case " ?
         }
       }
       // If the last address is valid and all addresses have been validated,
@@ -296,6 +307,8 @@ const Form: React.FC = () => {
   };
 
   const handleModalResponse = (response: string) => {
+    setInvalidAddressString(false);
+
     // Update the address fields based on the user's response
     addressSetter(response);
 
@@ -326,9 +339,7 @@ const Form: React.FC = () => {
         console.log(`Error: ${curInd} doesn't match any case`);
         break;
     }
-    console.log(`AddressSetter is here! Updating index from ${curInd}`);
     curInd++;
-    console.log("to: " + curInd);
   };
 
   const handleHeavyItemsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -380,18 +391,17 @@ const Form: React.FC = () => {
 
     if (
       selectedHeavyItems.length === 0 &&
-      ((moveSize !== "1-bedroom" && smallMoves.includes(moveSize)) ||
-        (moveSize === "1-bedroom" && !packing))
+      ((moveSize !== "1-br" && smallMoves.includes(moveSize)) || (moveSize === "1-br" && !packing))
     ) {
       recommendedMovers = 2;
     } else {
-      if (moveSize === "3-bedroom") {
+      if (moveSize === "3-br") {
         recommendedMovers = 4;
-      } else if (moveSize === "1-bedroom") {
+      } else if (moveSize === "1-br") {
         recommendedMovers = 2;
-      } else if (moveSize === "2-bedroom" || moveSize === "Large Storage") {
+      } else if (moveSize === "2-br" || moveSize === "Large Storage") {
         recommendedMovers = 3;
-      } else if (moveSize === "4-bedroom" || moveSize === "5+ bedroom") {
+      } else if (moveSize === "4-br" || moveSize === "5+ br") {
         recommendedMovers = 5;
       }
       if (recommendedMovers > 0 && packing) {
@@ -1008,11 +1018,11 @@ const Form: React.FC = () => {
                 </option>
                 <option value="Few items">Few items</option>
                 <option value="Studio">Studio</option>
-                <option value="1-bedroom">1-bedroom</option>
-                <option value="2-bedroom">2-bedroom</option>
-                <option value="3-bedroom">3-bedroom</option>
-                <option value="4-bedroom">4-bedroom</option>
-                <option value="5+ bedroom">5+ bedroom</option>
+                <option value="1-br">1-bedroom</option>
+                <option value="2-br">2-bedroom</option>
+                <option value="3-br">3-bedroom</option>
+                <option value="4-br">4-bedroom</option>
+                <option value="5+ br">5+ bedroom</option>
                 <option value="Small Storage">Small Storage</option>
                 <option value="Medium Storage">Medium Storage</option>
                 <option value="Large Storage">Large Storage</option>
@@ -1067,7 +1077,7 @@ const Form: React.FC = () => {
       <br />
       <label
         className="text-start form-check-label fw-bold d-flex align-items-center"
-        htmlFor="piano-check"
+        htmlFor="Piano"
         aria-describedby="heavy-help">
         Extra Heavy (300+ lb) or Oversized items:
         <span className="ms-2">
@@ -1085,11 +1095,11 @@ const Form: React.FC = () => {
             <input
               className="form-check-input"
               type="checkbox"
-              id="piano-check"
+              id="Piano"
               onChange={handleHeavyItemsChange}
               aria-label="Piano check box"
             />
-            <label className="form-check-label ml-2" htmlFor="piano-check">
+            <label className="form-check-label ml-2" htmlFor="Piano">
               Piano
             </label>
           </div>
@@ -1100,11 +1110,11 @@ const Form: React.FC = () => {
             <input
               className="form-check-input"
               type="checkbox"
-              id="gun-safe-check"
+              id="Gun Safe"
               onChange={handleHeavyItemsChange}
               aria-label="Gun safe check box"
             />
-            <label className="form-check-label text-nowrap ml-2" htmlFor="gun-safe-check">
+            <label className="form-check-label text-nowrap ml-2" htmlFor="Gun Safe">
               Gun Safe
             </label>
           </div>
@@ -1115,11 +1125,11 @@ const Form: React.FC = () => {
             <input
               className="form-check-input"
               type="checkbox"
-              id="other-heavy-check"
+              id="Other Heavy Item"
               onChange={handleHeavyItemsChange}
               aria-label="Other heavy item check box"
             />
-            <label className="form-check-label ml-2" htmlFor="other-heavy-check">
+            <label className="form-check-label ml-2" htmlFor="Other Heavy Item">
               Other
             </label>
           </div>
@@ -1349,7 +1359,7 @@ const Form: React.FC = () => {
             role="alert">
             {exactTimeNote}
             {largeMoveWarning}
-            <p>
+            <div className="form-group">
               <label htmlFor="ex-time-2">Preferred Time:</label>
               <DatePicker
                 id="ex-time-2"
@@ -1364,7 +1374,7 @@ const Form: React.FC = () => {
                 dateFormat="h:mm aa"
                 required
               />
-            </p>
+            </div>
           </div>
         )}
         {evnTimeFlag2 && (
@@ -1374,7 +1384,7 @@ const Form: React.FC = () => {
             role="alert">
             {evnTimeNote}
             {largeMoveWarning}
-            <p>
+            <div className="form-group">
               <label htmlFor="evn-time-2">What is the earliest time we can start:</label>
               <DatePicker
                 id="evn-time-2"
@@ -1389,7 +1399,7 @@ const Form: React.FC = () => {
                 dateFormat="h:mm aa"
                 required
               />
-            </p>
+            </div>
           </div>
         )}
       </div>
@@ -1410,7 +1420,6 @@ const Form: React.FC = () => {
             max={maxDate}
             value={date3}
             onChange={(e) => setDate3(e.target.value)}
-            required
           />
         </div>
 
@@ -1437,7 +1446,7 @@ const Form: React.FC = () => {
             role="alert">
             {exactTimeNote}
             {largeMoveWarning}
-            <p>
+            <div className="form-group">
               <label htmlFor="ex-time-3">Preferred Time:</label>
               <DatePicker
                 id="ex-time-3"
@@ -1452,7 +1461,7 @@ const Form: React.FC = () => {
                 dateFormat="h:mm aa"
                 required
               />
-            </p>
+            </div>
           </div>
         )}
         {evnTimeFlag3 && (
@@ -1462,7 +1471,7 @@ const Form: React.FC = () => {
             role="alert">
             {evnTimeNote}
             {largeMoveWarning}
-            <p>
+            <div className="form-group">
               <label htmlFor="evn-time-3">What is the earliest time we can start:</label>
               <DatePicker
                 id="evn-time-3"
@@ -1477,7 +1486,7 @@ const Form: React.FC = () => {
                 dateFormat="h:mm aa"
                 required
               />
-            </p>
+            </div>
           </div>
         )}
       </div>
@@ -1551,8 +1560,13 @@ const Form: React.FC = () => {
     </div>
   );
 
-  const altModal = (
-    <Modal show={showModal} onHide={() => setShowModal(false)}>
+  const modalWindow = (
+    <Modal
+      show={showModal}
+      onHide={() => {
+        setIsSubmitting(false);
+        setShowModal(false);
+      }}>
       <Modal.Header closeButton>
         <Modal.Title>Address Validation</Modal.Title>
       </Modal.Header>
@@ -1579,7 +1593,7 @@ const Form: React.FC = () => {
                     const trimmedPart = part.trim();
                     const mismatch =
                       addresses[curInd] &&
-                      addresses[curInd].split(",")[index].trim() !== trimmedPart;
+                      addresses[curInd].split(",")[index]?.trim() !== trimmedPart;
                     const userSubparts = addresses[curInd]
                       ?.split(",")
                       // eslint-disable-next-line no-unexpected-multiline
@@ -1610,14 +1624,30 @@ const Form: React.FC = () => {
                 Keep Original
               </Button>
             </div>
-            <div className="col">
-              <Button
-                className="text-nowrap"
-                variant="primary"
-                onClick={() => handleModalResponse(chosenAddressString)}>
-                Use Formatted
-              </Button>
-            </div>
+            {!invalidAddressString && (
+              <div className="col">
+                <Button
+                  className="text-nowrap"
+                  variant="primary"
+                  onClick={() => handleModalResponse(chosenAddressString)}>
+                  Use Formatted
+                </Button>
+              </div>
+            )}
+            {invalidAddressString && (
+              <div className="col">
+                <Button
+                  className="text-nowrap"
+                  variant="primary"
+                  onClick={() => {
+                    setIsSubmitting(false);
+                    setInvalidAddressString(false);
+                    setShowModal(false);
+                  }}>
+                  Go back & fix
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </Modal.Footer>
@@ -1637,7 +1667,7 @@ const Form: React.FC = () => {
   form.push(movingDates);
   form.push(additionalInfo);
   form.push(checkAndSubmit);
-  form.push(altModal);
+  form.push(modalWindow);
 
   // custom validation temporarily not available. Add noValidate to className when it's fixed
   return (

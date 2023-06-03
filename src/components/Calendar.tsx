@@ -32,13 +32,28 @@ const Calendar: React.FC<CalendarProps> = () => {
 
   useEffect(() => {
     const fetchSchedule = async () => {
-      try {
-        const response = await fetch(apiURL);
-        const result = await response.json();
-        setData(result);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+      const maxAttempts = 5;
+      const delay = 5000; // 5 seconds
+      let attempts = 0;
+
+      while (attempts < maxAttempts) {
+        try {
+          const response = await fetch(apiURL);
+          const result = await response.json();
+          setData(result);
+          return; // If successful, exit the function
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+
+        attempts++;
+        if (attempts < maxAttempts) {
+          await new Promise((resolve) => setTimeout(resolve, delay));
+        }
       }
+
+      console.error("Exceeded maximum fetch attempts. Returning error.");
+      // TODO: What should I do if the server is down?
     };
 
     fetchSchedule();
@@ -305,7 +320,7 @@ const Calendar: React.FC<CalendarProps> = () => {
             {monthName} {year}
           </div>
         ) : (
-          <p>Loading...</p>
+          <div className="col calendar-header">Loading...</div>
         )}
         <div className="col-auto">{getArrowButton(1)}</div>
       </div>
