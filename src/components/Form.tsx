@@ -4,7 +4,7 @@ import { Button, Modal } from "react-bootstrap";
 import states from "states-us";
 import "./Form.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import HelpIcon from "./HelpIcon";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -167,8 +167,6 @@ const Form: React.FC = () => {
       addInfo,
     };
 
-    console.log(JSON.stringify(data)); // Use this JSON data for submitting over the API
-
     try {
       const response = await fetch(formSubmissionApiURL, {
         method: "POST",
@@ -179,8 +177,8 @@ const Form: React.FC = () => {
       });
 
       if (response.ok) {
-        const responseData = await response.text();
-        console.log("Received API response: " + responseData);
+        //const responseData = await response.text();
+        //console.log("Received API response: " + responseData);
         setIsSubmitted(true);
       } else {
         console.error("Request failed with status:", response.status);
@@ -195,7 +193,6 @@ const Form: React.FC = () => {
   };
 
   const validateAddress = async (address: string) => {
-    console.log("DEBUG: validateAddress is called for " + address);
     const requestBody = {
       id: "stub",
       address: address,
@@ -212,7 +209,7 @@ const Form: React.FC = () => {
 
       if (response.ok) {
         const responseData = await response.text();
-        console.log("DEBUG: Received API response: " + responseData);
+        //console.log("DEBUG: Received API response: " + responseData);
         const result = JSON.parse(responseData);
         setChosenAddressString(result.formattedAddress);
         return result;
@@ -266,18 +263,15 @@ const Form: React.FC = () => {
         const result = await validateAddress(currentAddress);
 
         if (result === "error") {
-          console.log("An error occured. Couldn't confirm the address");
+          console.error("An error occured. Couldn't confirm the address");
           await addressSetter(currentAddress);
         } else {
           // Access the values in the response object
           const verdict = result.verdict;
           const formattedAddress = result.formattedAddress;
 
-          console.log("input: " + currentAddress);
-          console.log("corAdd: " + formattedAddress);
-          console.log("Equal? " + (formattedAddress === currentAddress));
-          console.log("currentAddressIndex: " + curInd);
-          console.log(addresses);
+          //console.log("input: " + currentAddress);
+          //console.log("corAdd: " + formattedAddress);
 
           // If the address is invalid, show the modal and exit the loop
           if (verdict === "ok") {
@@ -296,11 +290,8 @@ const Form: React.FC = () => {
           }
         }
       }
-      // If the last address is valid and all addresses have been validated,
-      // you can proceed with the desired action (e.g., making an API request)
+      // If the last address is valid and all addresses have been validated
       if (curInd === addresses.length) {
-        // Make the API request or perform other actions
-        console.log("Validation COMPLETE!");
         wrapAndSubmit();
       }
     }
@@ -336,7 +327,7 @@ const Form: React.FC = () => {
         destAddress = value;
         break;
       default:
-        console.log(`Error: ${curInd} doesn't match any case`);
+        console.error(`Error: ${curInd} doesn't match any case`);
         break;
     }
     curInd++;
