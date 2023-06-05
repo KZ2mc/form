@@ -6,13 +6,13 @@ import FormWFormik from "./components/FormWFormik";
 // npm run dev :D
 // npm run deploy
 const App: React.FC = () => {
-  /*return (
+  return (
     <>
       <Calendar year={2023} month={4} />
       <BookingForm />
     </>
-  );*/
-  return <FormWFormik />;
+  );
+  //return <FormWFormik />;
 };
 
 export default App;
