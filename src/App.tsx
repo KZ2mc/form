@@ -1,16 +1,18 @@
 import React from "react";
 import Calendar from "./components/Calendar";
-import Form from "./components/Form";
+import BookingForm from "./components/BookingForm";
+import FormWFormik from "./components/FormWFormik";
 
 // npm run dev :D
 // npm run deploy
 const App: React.FC = () => {
-  return (
+  /*return (
     <>
       <Calendar year={2023} month={4} />
-      <Form />
+      <BookingForm />
     </>
-  );
+  );*/
+  return <FormWFormik />;
 };
 
 export default App;
