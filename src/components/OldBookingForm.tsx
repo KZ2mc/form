@@ -1,7 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import ReactDOM from "react-dom";
-import { Formik, Field, Form, ErrorMessage, useField } from "formik";
-import * as Yup from "yup";
 import { Element, scroller } from "react-scroll";
 import { Button, Modal } from "react-bootstrap";
 import states from "states-us";
@@ -17,136 +14,7 @@ import { setHours, setMinutes } from "date-fns";
 //import { useForm } from "react-hook-form";
 //import { yupResolver } from "@hookform/resolvers/yup";
 //import * as yup from "yup";
-const phoneRegExp =
-  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
-interface MyTextInputProps {
-  label?: string;
-  className?: string;
-  name: string;
-  type: string;
-  placeholder: string;
-  id?: string; // Add the id property to the interface
-  minLength?: number;
-  maxLength?: number;
-}
-
-const MyTextInput: React.FC<MyTextInputProps> = ({ label, className, ...props }) => {
-  // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
-  // which we can spread on <input>. We can use field meta to show an error
-  // message if the field is invalid and it has been touched (i.e. visited)
-  const [field, meta] = useField(props);
-  return (
-    <>
-      {label && (
-        <label htmlFor={props.id || props.name} className="d-flex form-label fw-bold">
-          {label}
-        </label>
-      )}
-      <input className={`text-input form-control ${className}`} {...field} {...props} />
-      {meta.touched && meta.error ? <div className="error">{meta.error}</div> : null}
-    </>
-  );
-};
-
-interface MyCheckboxProps {
-  children: React.ReactNode;
-  wrapperDivClassName?: string;
-  name: string;
-}
-
-const MyCheckbox: React.FC<MyCheckboxProps> = ({ wrapperDivClassName, children, ...props }) => {
-  // React treats radios and checkbox inputs differently from other input types: select and textarea.
-  // Formik does this too! When you specify `type` to useField(), it will
-  // return the correct bag of props for you -- a `checked` prop will be included
-  // in `field` alongside `name`, `value`, `onChange`, and `onBlur`
-  const [field, meta] = useField({ ...props, type: "checkbox" });
-  return (
-    <div className={`form-check ${wrapperDivClassName}`}>
-      <label className="checkbox-input form-check-label text-nowrap">
-        <input type="checkbox" className="form-check-input" {...field} {...props} />
-        {children}
-      </label>
-      {meta.touched && meta.error ? <div className="error">{meta.error}</div> : null}
-    </div>
-  );
-};
-
-interface MySelectProps {
-  label?: string;
-  name: string;
-  className?: string;
-  id?: string;
-  children: React.ReactNode; // Add children prop
-}
-
-const MySelect: React.FC<MySelectProps> = ({ label, className, ...props }) => {
-  const [field, meta] = useField(props);
-  return (
-    <div>
-      {label && <label htmlFor={props.id || props.name}>{label}</label>}
-      <select className={`form-select ${className}`} {...field} {...props} />
-      {meta.touched && meta.error ? <div className="error">{meta.error}</div> : null}
-    </div>
-  );
-};
-
-interface MyAddressBlockProps {
-  location: string;
-  name: string;
-  id?: string;
-}
-
-const MyAddressBlock: React.FC<MyAddressBlockProps> = ({ location, ...props }) => {
-  return (
-    <div className="row g-2" id={props.id || props.name}>
-      <div className="col-12">
-        <MyTextInput name={`${location}StreetAddress`} type="text" placeholder="1234 Main St" />
-      </div>
-      <div className="col-12">
-        <MyTextInput
-          name={`${location}StreetAddress2`}
-          type="text"
-          placeholder="Apartment, unit, or office"
-        />
-      </div>
-      <div className="col-lg-7 col-md-7 col-sm-6 col-6">
-        <MyTextInput name={`${location}City`} type="text" placeholder="City" />
-      </div>
-      <div className="col-lg-2 col-md-2 col-sm-3 col-3">
-        <MySelect name={`${location}State`}>{stateOptions}</MySelect>
-      </div>
-      <div className="col-lg-3 col-md-3 col-sm-3 col-3">
-        <MyTextInput
-          minLength={5}
-          maxLength={5}
-          name={`${location}Zip`}
-          type="text"
-          placeholder="Zip"
-        />
-      </div>
-
-      {(location === "pickup" || location === "dest") && (
-        <div className="row g-1 ms-0">
-          <div className="col-md-6">
-            <MySelect className="col" name={`${location}FloorSelector`}>
-              {floorOptions}
-            </MySelect>
-          </div>
-          <div className="col-md-5 ms-1 d-flex align-items-center">
-            <MyCheckbox name={`${location}ElevatorCheck`}>Elevator</MyCheckbox>
-            <MyCheckbox wrapperDivClassName="ms-4" name={`${location}LongWalkCheck`}>
-              Long Walk
-            </MyCheckbox>
-            <div className="ms-0 align-self-center">
-              <HelpIcon helpMessage="No extra charge. It is to help us better understand the task." />
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
 const addressValidationApiURL = "https://api.kz2movingcompany.com:8443/validate_address";
 const formSubmissionApiURL = "https://api.kz2movingcompany.com:8443/form_submission";
 const defaultStateCode = "CA";
@@ -165,40 +33,7 @@ let stopOneAddress = "";
 let stopTwoAddress = "";
 let destAddress = "";
 
-const stateOptions = states.map((state) => (
-  <option key={state.abbreviation} value={state.abbreviation}>
-    {state.abbreviation}
-  </option>
-));
-
-const floorOptions = [
-  <option value="" disabled>
-    Most of the stuff goes to...
-  </option>,
-  <option key="Ground" value="Ground">
-    Ground floor
-  </option>,
-  <option key="1st floor" value="1st floor">
-    1st floor
-  </option>,
-  <option key="2nd floor" value="2nd floor">
-    2nd floor
-  </option>,
-  <option key="3rd floor" value="3rd floor">
-    3rd floor
-  </option>,
-  <option key="4th floor" value="4th floor">
-    4th floor
-  </option>,
-  <option key="5+ floor" value="5+ floor">
-    5+ floor
-  </option>,
-  <option key="Other floor" value="Other">
-    Other
-  </option>,
-];
-
-const FormWFormik: React.FC = () => {
+const BookingForm: React.FC = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const formContainerRef = useRef<HTMLDivElement | null>(null);
   const form = [];
@@ -211,8 +46,8 @@ const FormWFormik: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
 
   // User Data Block:
-  //const [firstName, setFirstName] = useState("");
-  //const [lastName, setLastName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
 
@@ -293,20 +128,10 @@ const FormWFormik: React.FC = () => {
   const capitalizeName = (input: string): string =>
     input ? input.trim().charAt(0).toLocaleUpperCase() + input.slice(1).toLocaleLowerCase() : "";
 
-  const foo = (values: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    acceptedTerms: boolean; // added for our checkbox
-    jobType: string;
-  }) => {
-    alert(JSON.stringify(values, null, 2));
-  };
-
   const wrapAndSubmit = async () => {
     const data = {
-      //firstName : capitalizeName(values),
-      //lastName: capitalizeName(lastName),
+      firstName: capitalizeName(firstName),
+      lastName: capitalizeName(lastName),
       email: email.trim().toLowerCase(),
       phoneNumber,
       pickupAddress,
@@ -632,15 +457,35 @@ const FormWFormik: React.FC = () => {
   const nameField = (
     <div className="row g-2" key="name-field">
       <div className="col">
-        <label htmlFor="firstName" className="d-flex form-label fw-bold">
+        <label htmlFor="first-name-field" className="d-flex form-label fw-bold">
           First Name
         </label>
-        <Field name="firstName" className="form-control" type="text" placeholder="Jane" />
-        <ErrorMessage name="firstName" className="invalid-feedback" />
+        <input
+          type="text"
+          className="form-control"
+          id="first-name-field"
+          placeholder="Jane"
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          aria-label="First name field"
+          required
+        />
       </div>
 
       <div className="col">
-        <MyTextInput label="Last Name" name="lastName" type="text" placeholder="Doe" />
+        <label htmlFor="last-name-field" className="d-flex form-label fw-bold">
+          Last name
+        </label>
+        <input
+          type="text"
+          className="form-control"
+          id="last-name-field"
+          placeholder="Doe"
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          aria-label="Last name field"
+          required
+        />
       </div>
     </div>
   );
@@ -650,26 +495,48 @@ const FormWFormik: React.FC = () => {
       <br />
       <div className="row g-2">
         <div className="col mb-3">
-          <MyTextInput
-            label="Email Address"
-            name="email"
+          <label htmlFor="email-field" className="d-flex form-label fw-bold">
+            Email
+          </label>
+          <input
             type="email"
-            placeholder="jane@gmail.com"
+            className="form-control"
+            id="email-field"
+            placeholder="name@example.com"
+            aria-describedby="data-help"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            aria-label="Email field"
+            required
           />
+          <div className="invalid-feedback">Please provide a valid email.</div>
         </div>
         <div className="col form-group">
-          <MyTextInput
+          <label htmlFor="phone-field" className="d-flex form-label fw-bold">
+            Phone
+          </label>
+          <input
+            type="tel"
+            className="form-control"
+            id="phone-field"
+            placeholder="###-###-####"
+            value={phoneNumber}
+            onChange={handlePhoneNumberChange}
             minLength={12}
             maxLength={12}
-            label="Phone"
-            name="phone"
-            type="tel"
-            placeholder="###-###-####"
+            aria-label="Phone number field"
+            required
           />
         </div>
       </div>
     </div>
   );
+
+  const stateOptions = states.map((state) => (
+    <option key={state.abbreviation} value={state.abbreviation}>
+      {state.abbreviation}
+    </option>
+  ));
 
   const pickupAddressFields = (
     <div key="pickup-address-fields" id="pickup-block">
@@ -678,7 +545,121 @@ const FormWFormik: React.FC = () => {
           Pickup address:
         </label>
       </div>
-      <MyAddressBlock location="pickup" name="pickup-address-block" />
+      <div className="row g-2">
+        <div className="col-12">
+          <input
+            type="text"
+            className="form-control"
+            id="pickup-address"
+            placeholder="1234 Main St"
+            value={pickupStreetAddress}
+            onChange={(e) => setPickupStreetAddress(e.target.value)}
+            aria-label="Pickup street address field"
+            required
+          />
+        </div>
+        <div className="col-12">
+          <input
+            type="text"
+            className="form-control"
+            id="pickup-address-2"
+            placeholder="Apartment, unit, or office"
+            value={pickupStreetAddress2}
+            onChange={(e) => setPickupStreetAddress2(e.target.value)}
+            aria-label="Pickup apartment, unit, or office field"
+          />
+        </div>
+        <div className="col-lg-7 col-md-7 col-sm-6 col-6">
+          <input
+            type="text"
+            className="form-control"
+            id="pickup-city"
+            placeholder="City"
+            value={pickupCity}
+            onChange={(e) => setPickupCity(e.target.value)}
+            aria-label="Pickup city field"
+            required
+          />
+        </div>
+        <div className="col-lg-2 col-md-2 col-sm-3 col-3">
+          <select
+            id="pickup-state"
+            className="form-select"
+            value={pickupState}
+            onChange={(e) => setPickupState(e.target.value)}
+            aria-label="Pickup state selector"
+            required>
+            {stateOptions}
+          </select>
+        </div>
+        <div className="col-lg-3 col-md-3 col-sm-3 col-3">
+          <input
+            type="text"
+            id="pickup-zip-code"
+            value={pickupZipCode}
+            onChange={(e) => handleZipCodeChange(e, setPickupZipCode)}
+            className="form-control"
+            placeholder="Zip"
+            maxLength={5}
+            aria-label="Pickup zip field"
+            required
+          />
+        </div>
+
+        <div className="row g-1 ms-0">
+          <div className="col-md-6">
+            <select
+              className="col form-select"
+              id="pickup-floor-selector"
+              aria-label="Select Pickup Floor"
+              value={pickupFloorSelector}
+              onChange={(e) => setPickupFloorSelector(e.target.value)}
+              required>
+              <option value="" disabled>
+                Most of the stuff is on the...
+              </option>
+              <option value="Ground">Ground floor</option>
+              <option value="1st floor">1st floor</option>
+              <option value="2nd floor">2nd floor</option>
+              <option value="3rd floor">3rd floor</option>
+              <option value="4th floor">4th floor</option>
+              <option value="5+ floor">5+ floor</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div className="col-md-5 ms-1 d-flex align-items-center">
+            <div className="form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="pickup-elevator-check"
+                checked={pickupElevatorCheck}
+                onChange={(e) => setPickupElevatorCheck(e.target.checked)}
+                aria-label="Pickup elevator check box"
+              />
+              <label className="form-check-label" htmlFor="pickup-elevator-check">
+                Elevator
+              </label>
+            </div>
+            <div className="form-check ms-4">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="pickup-long-walk-check"
+                checked={pickupLongWalkCheck}
+                onChange={(e) => setPickupLongWalkCheck(e.target.checked)}
+                aria-label="Pickup long-walk check box"
+              />
+              <label className="form-check-label text-nowrap" htmlFor="pickup-long-walk-check">
+                Long Walk
+              </label>
+            </div>
+            <div className="ms-0 align-self-center">
+              <HelpIcon helpMessage="No extra charge. It is to help us better understand the task." />
+            </div>
+          </div>
+        </div>
+      </div>
 
       {!stopOne && (
         <div className="text-center mt-2">
@@ -717,7 +698,67 @@ const FormWFormik: React.FC = () => {
           )}
         </div>
       </div>
-      <MyAddressBlock location="stopOne" name="stop-one-address-block" />
+      <div className="row g-2" id="stop-one-block">
+        <div className="col-12">
+          <input
+            type="text"
+            className="form-control"
+            id="stop-one-address"
+            placeholder="1234 Main St"
+            value={stopOneStreetAddress}
+            onChange={(e) => setStopOneStreetAddress(e.target.value)}
+            aria-label="Stop one street address field"
+            required
+          />
+        </div>
+        <div className="col-12">
+          <input
+            type="text"
+            className="form-control"
+            id="stop-one-address-2"
+            placeholder="Apartment, unit, or office"
+            value={stopOneStreetAddress2}
+            onChange={(e) => setStopOneStreetAddress2(e.target.value)}
+            aria-label="Stop one apartment, unit, or office field"
+          />
+        </div>
+        <div className="col-lg-7 col-md-7 col-sm-6 col-6">
+          <input
+            type="text"
+            className="form-control"
+            id="stop-one-city"
+            placeholder="City"
+            value={stopOneCity}
+            onChange={(e) => setStopOneCity(e.target.value)}
+            aria-label="Stop one city field"
+            required
+          />
+        </div>
+        <div className="col-lg-2 col-md-2 col-sm-3 col-3">
+          <select
+            id="stop-one-state"
+            className="form-select"
+            value={stopOneState}
+            onChange={(e) => setStopOneState(e.target.value)}
+            aria-label="Stop one state selector"
+            required>
+            {stateOptions}
+          </select>
+        </div>
+        <div className="col-lg-3 col-md-3 col-sm-3 col-3">
+          <input
+            type="text"
+            id="stop-one-zip-code"
+            value={stopOneZipCode}
+            onChange={(e) => handleZipCodeChange(e, setStopOneZipCode)}
+            className="form-control"
+            placeholder="Zip"
+            maxLength={5}
+            aria-label="Stop one zip field"
+            required
+          />
+        </div>
+      </div>
       {!stopTwo && (
         <div className="row align-items-center">
           <div className="col text-center mt-2">
@@ -755,7 +796,66 @@ const FormWFormik: React.FC = () => {
           />
         </div>
       </div>
-      <MyAddressBlock location="stopTwo" name="stop-two-address-block" />
+      <div className="row g-2" id="stop-two-block">
+        <div className="col-12">
+          <input
+            type="text"
+            className="form-control"
+            id="stop-two-address"
+            placeholder="1234 Main St"
+            value={stopTwoStreetAddress}
+            onChange={(e) => setStopTwoStreetAddress(e.target.value)}
+            aria-label="Stop two street address field"
+            required
+          />
+        </div>
+        <div className="col-12">
+          <input
+            type="text"
+            className="form-control"
+            id="stop-two-address-2"
+            placeholder="Apartment, unit, or office"
+            value={stopTwoStreetAddress2}
+            onChange={(e) => setStopTwoStreetAddress2(e.target.value)}
+            aria-label="Stop two apartment, unit, or office field"
+          />
+        </div>
+        <div className="col-lg-7 col-md-7 col-sm-6 col-6">
+          <input
+            type="text"
+            className="form-control"
+            id="stop-two-city"
+            placeholder="City"
+            value={stopTwoCity}
+            onChange={(e) => setStopTwoCity(e.target.value)}
+            required
+          />
+        </div>
+        <div className="col-lg-2 col-md-2 col-sm-3 col-3">
+          <select
+            id="stop-two-state"
+            className="form-select"
+            value={stopTwoState}
+            onChange={(e) => setStopTwoState(e.target.value)}
+            aria-label="Stop state selector"
+            required>
+            {stateOptions}
+          </select>
+        </div>
+        <div className="col-lg-3 col-md-3 col-sm-3 col-3">
+          <input
+            type="text"
+            id="stop-two-code"
+            value={stopTwoZipCode}
+            onChange={(e) => handleZipCodeChange(e, setStopTwoZipCode)}
+            className="form-control"
+            placeholder="Zip"
+            maxLength={5}
+            aria-label="Stop zip field"
+            required
+          />
+        </div>
+      </div>
     </div>
   );
 
@@ -767,7 +867,120 @@ const FormWFormik: React.FC = () => {
           Destination address:
         </label>
       </div>
-      <MyAddressBlock location="dest" name="dest-address-block" />
+      <div className="row g-2" id="dest-block">
+        <div className="col-12">
+          <input
+            type="text"
+            className="form-control"
+            id="dest-address"
+            placeholder="1234 Main St"
+            value={destStreetAddress}
+            onChange={(e) => setDestStreetAddress(e.target.value)}
+            aria-label="Destination street address field"
+            required
+          />
+        </div>
+        <div className="col-12">
+          <input
+            type="text"
+            className="form-control"
+            id="dest-address-2"
+            placeholder="Apartment, unit, or office"
+            value={destStreetAddress2}
+            onChange={(e) => setDestStreetAddress2(e.target.value)}
+            aria-label="Destination apartment, unit, or office field"
+          />
+        </div>
+        <div className="col-lg-7 col-md-7 col-sm-6 col-6">
+          <input
+            type="text"
+            className="form-control"
+            id="dest-city"
+            placeholder="City"
+            value={destCity}
+            onChange={(e) => setDestCity(e.target.value)}
+            aria-label="Destination city field"
+            required
+          />
+        </div>
+        <div className="col-lg-2 col-md-2 col-sm-3 col-3">
+          <select
+            id="dest-state"
+            className="form-select"
+            value={destState}
+            onChange={(e) => setDestState(e.target.value)}
+            aria-label="Destination state selector"
+            required>
+            {stateOptions}
+          </select>
+        </div>
+        <div className="col-lg-3 col-md-3 col-sm-3 col-3">
+          <input
+            id="dest-zip-code"
+            value={destZipCode}
+            onChange={(e) => handleZipCodeChange(e, setDestZipCode)}
+            type="text"
+            className="form-control"
+            placeholder="Zip"
+            maxLength={5}
+            aria-label="Destination zip field"
+            required
+          />
+        </div>
+        <div className="row g-1 ms-0">
+          <div className="col-md-6">
+            <select
+              className="col form-select"
+              id="dest-floor-selector"
+              aria-label="Destintion floor selector"
+              value={destFloorSelector}
+              onChange={(e) => setDestFloorSelector(e.target.value)}
+              required>
+              <option value="" disabled>
+                Most of the stuff goes to...
+              </option>
+              <option value="Ground">Ground floor</option>
+              <option value="1st floor">1st floor</option>
+              <option value="2nd floor">2nd floor</option>
+              <option value="3rd floor">3rd floor</option>
+              <option value="4th floor">4th floor</option>
+              <option value="5+ floor">5+ floor</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div className="col-md-5 ms-1 d-flex align-items-center">
+            <div className="form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="dest-elevator-check"
+                checked={destElevatorCheck}
+                onChange={(e) => setDestElevatorCheck(e.target.checked)}
+                aria-label="Destination elevator check box"
+              />
+              <label className="form-check-label" htmlFor="dest-elevator-check">
+                Elevator
+              </label>
+            </div>
+            <div className="form-check ms-4">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="dest-long-walk-check"
+                checked={destLongWalkCheck}
+                onChange={(e) => setDestLongWalkCheck(e.target.checked)}
+                aria-label="Destination long-walk check box"
+              />
+              <label className="form-check-label text-nowrap" htmlFor="dest-long-walk-check">
+                Long Walk
+              </label>
+            </div>
+            <div className="ms-0 align-self-center">
+              <HelpIcon helpMessage="No extra charge. It is to help us better understand the task." />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 
@@ -1325,9 +1538,10 @@ const FormWFormik: React.FC = () => {
         <div className="mt-2">
           <p className="m-0 text-start">We will never share your information with third parties.</p>
         </div>
-        <MyCheckbox wrapperDivClassName="mt-2" name="confirmationCheckbox">
-          I agree
-        </MyCheckbox>
+        <div className="form-check mt-2">
+          <input className="form-check-input" type="checkbox" id="confirmation-checkbox" required />
+          <label className="form-check-label">I agree</label>
+        </div>
       </div>
 
       <div className="col-12 text-center mb-3">
@@ -1447,6 +1661,7 @@ const FormWFormik: React.FC = () => {
   form.push(checkAndSubmit);
   form.push(modalWindow);
 
+  // custom validation temporarily not available. Add noValidate to className when it's fixed
   return (
     <div className="form-container" ref={formContainerRef}>
       {isSubmitted ? (
@@ -1454,132 +1669,12 @@ const FormWFormik: React.FC = () => {
           Thank you for your submission! We will get back to you shortly
         </Element>
       ) : (
-        <Formik
-          initialValues={{
-            firstName: "",
-            lastName: "",
-            email: "",
-            phoneNumber: "",
-
-            pickupAddress: "",
-            pickupStreetAddress: "",
-            pickupStreetAddres2: "",
-            pickupCity: "",
-            pickupState: "CA",
-            pickupZip: "",
-            pickupFloorSelector: "",
-            pickupElevatorCheck: false,
-            pickupLongWalkCheck: false,
-
-            stopOneAddress: "",
-            stopOne: false,
-            stopOneStreetAddress: "",
-            stopOneStreetAddress2: "",
-            stopOneCity: "",
-            stopOneState: "CA",
-            stopOneZip: "",
-
-            stopTwoAddress: "",
-            stopTwo: false,
-            stopTwoStreetAddress: "",
-            stopTwoStreetAddress2: "",
-            stopTwoCity: "",
-            stopTwoState: "CA",
-            stopTwoZip: "",
-
-            destAddress: "",
-            destStreetAddress: "",
-            destStreetAddres2: "",
-            destCity: "",
-            destState: "CA",
-            destZip: "",
-            destFloorSelector: "",
-            destElevatorCheck: false,
-            destLongWalkCheck: false,
-
-            moveSize: "",
-            truck: true,
-            packing: false,
-            selectedHeavyItems: [],
-            inputHeavyDetails: "",
-            defaultMovers: true,
-            selectedMovers: "",
-            acceptedTerms: false, // added for our checkbox
-            jobType: "", // added for our select
-          }}
-          validationSchema={Yup.object({
-            firstName: Yup.string().max(15, "Must be 15 characters or less").required("Required"),
-            lastName: Yup.string().max(20, "Must be 20 characters or less").required("Required"),
-            email: Yup.string().email("Invalid email address").required("Required"),
-            phoneNumber: Yup.string()
-              .required("Phone number is required")
-              .test("valid-phone-number", "Invalid phone number", (value) => {
-                // Regular expression to validate phone number format (e.g., xxx-xxx-xxxx)
-                const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
-                return phoneRegex.test(value);
-              }),
-
-            pickupAddress: Yup.string().required("Required"),
-            pickupStreetAddress: Yup.string().required("Required"),
-            pickupStreetAddres2: Yup.string(),
-            pickupCity: Yup.string().required("Required"),
-            pickupState: Yup.string().required("Required"),
-            pickupFloorSelector: Yup.string().required("Required"),
-            pickupElevatorCheck: Yup.boolean(),
-            pickupLongWalkCheck: Yup.boolean(),
-
-            stopOneAddress: Yup.string().required("Required"),
-            stopOne: Yup.boolean(),
-            stopOneStreetAddress: Yup.string(),
-            stopOneStreetAddress2: Yup.string(),
-            stopOneCity: Yup.string(),
-            stopOneState: Yup.string(),
-            stopOneZipCode: Yup.string(),
-
-            stopTwoAddress: Yup.string(),
-            stopTwo: Yup.boolean(),
-            stopTwoStreetAddress: Yup.string(),
-            stopTwoStreetAddress2: Yup.string(),
-            stopTwoCity: Yup.string(),
-            stopTwoState: Yup.string(),
-            stopTwoZipCode: Yup.string(),
-
-            destAddress: Yup.string().required("Required"),
-            destStreetAddress: Yup.string().required("Required"),
-            destStreetAddres2: Yup.string(),
-            destCity: Yup.string().required("Required"),
-            destState: Yup.string().required("Required"),
-            destFloorSelector: Yup.string().required("Required"),
-            destElevatorCheck: Yup.boolean(),
-            destLongWalkCheck: Yup.boolean(),
-
-            moveSize: Yup.string().required("Required"),
-            truck: Yup.boolean(),
-            packing: Yup.boolean(),
-            selectedHeavyItems: Yup.array().of(Yup.string()),
-            inputHeavyDetails: Yup.string(),
-            defaultMovers: Yup.boolean(),
-            selectedMovers: Yup.string(),
-            confirmationCheckbox: Yup.boolean()
-              .required("Required")
-              .oneOf([true], "You have to agree to proceed."),
-            jobType: Yup.string()
-              .oneOf(["designer", "development", "product", "other"], "Invalid Job Type")
-              .required("Required"),
-          })}
-          onSubmit={(values, { setSubmitting }) => {
-            setTimeout(() => {
-              console.log("submitting!"), foo(values), setSubmitting(false);
-            }, 400);
-          }}>
-          <Form>
-            {form}
-            <button type="submit">Submit</button>
-          </Form>
-        </Formik>
+        <form key="form" ref={formRef} onSubmit={validateSubmission} className="needs-validation">
+          {form}
+        </form>
       )}
     </div>
   );
 };
 
-export default FormWFormik;
+export default BookingForm;
