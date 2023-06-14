@@ -491,7 +491,12 @@ const FormWFormik: React.FC = () => {
         <div className="row g-2 d-flex align-items-center">
           <div id="options-help" className="text-start form-text extra-small mt-0">
             Not sure which one to choose? Check out our{" "}
-            <a href="https://www.kz2movingcompany.com/post/how-to-estimate-your-move-size">Guide</a>{" "}
+            <a
+              href="https://www.kz2movingcompany.com/post/how-to-estimate-your-move-size"
+              target="_blank"
+              rel="noopener noreferrer">
+              Guide
+            </a>{" "}
           </div>
 
           <div className="row g-1 ms-0">
@@ -586,8 +591,14 @@ const FormWFormik: React.FC = () => {
           </span>
         </label>
         <div id="heavy-help" className="text-start form-text extra-small mt-0">
-          May be charged extra. See <a href="https://www.kz2movingcompany.com/prices">Prices</a> for
-          more information
+          May be charged extra. See{" "}
+          <a
+            href="https://www.kz2movingcompany.com/prices"
+            target="_blank"
+            rel="noopener noreferrer">
+            Prices
+          </a>{" "}
+          for more information
         </div>
 
         <div className="row g-2 align-items-center" id="heavy-check">
