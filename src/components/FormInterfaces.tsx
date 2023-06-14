@@ -65,6 +65,24 @@ export interface FormValues {
   additionalInfo: string;
   acceptedTerms: boolean;
 }
+export interface FlagSetters {
+  setExactTimeFlag1: (value: boolean) => void;
+  setEvnTimeFlag1: (value: boolean) => void;
+  setExactTimeFlag2: (value: boolean) => void;
+  setEvnTimeFlag2: (value: boolean) => void;
+  setExactTimeFlag3: (value: boolean) => void;
+  setEvnTimeFlag3: (value: boolean) => void;
+}
+
+export interface Flags {
+  exactTimeFlag1: boolean;
+  evnTimeFlag1: boolean;
+  exactTimeFlag2: boolean;
+  evnTimeFlag2: boolean;
+  exactTimeFlag3: boolean;
+  evnTimeFlag3: boolean;
+  largeMove: boolean;
+}
 
 export interface MyDateInputProps {
   name: string;
@@ -78,6 +96,8 @@ export interface MyDateAndTimeBlockProps {
   label: string;
   optional?: boolean;
   id: string;
+  flagSetters: FlagSetters;
+  flags: Flags;
 }
 
 export interface MyTextInputProps {

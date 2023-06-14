@@ -6,23 +6,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import HelpIcon from "./HelpIcon.tsx";
 import * as Yup from "yup";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { setHours, setMinutes } from "date-fns";
 
-import states from "states-us";
 import "./BookingForm.css";
-import * as FI from "./FormInterfaces.tsx";
-
-const currentDate = new Date();
-const minDate = currentDate.toISOString().split("T")[0];
-const maxDate = new Date(
-  currentDate.getFullYear(),
-  currentDate.getMonth() + 6,
-  currentDate.getDate()
-)
-  .toISOString()
-  .split("T")[0];
+import MyTextInput from "./MyTextInput.tsx";
+import MyCheckbox from "./MyCheckbox.tsx";
+import MySelect from "./MySelect.tsx";
+import MyAddressBlock from "./MyAddressBlock.tsx";
+import MyDateAndTimeBlock from "./MyDateAndTimeBlock.tsx";
+import { FormValues } from "./FormInterfaces.tsx";
 
 const addressValidationApiURL = "https://api.kz2movingcompany.com:8443/validate_address";
 const formSubmissionApiURL = "https://api.kz2movingcompany.com:8443/form_submission";
@@ -44,57 +37,6 @@ const timeFormatOptions: Intl.DateTimeFormatOptions = {
 
 const smallMoves = ["Few items", "Studio", "1-br", "Small storage", "Medium Storage"];
 
-const stateOptions = states.map((state) => (
-  <option key={state.abbreviation} value={state.abbreviation}>
-    {state.abbreviation}
-  </option>
-));
-
-const floorOptions = [
-  <option key="floor-placeholder" value="" disabled>
-    Most of the stuff goes to...
-  </option>,
-  <option key="Ground" value="Ground">
-    Ground floor
-  </option>,
-  <option key="1st floor" value="1st floor">
-    1st floor
-  </option>,
-  <option key="2nd floor" value="2nd floor">
-    2nd floor
-  </option>,
-  <option key="3rd floor" value="3rd floor">
-    3rd floor
-  </option>,
-  <option key="4th floor" value="4th floor">
-    4th floor
-  </option>,
-  <option key="5+ floor" value="5+ floor">
-    5+ floor
-  </option>,
-  <option key="Other floor" value="Other">
-    Other
-  </option>,
-];
-
-const timeOptions = [
-  <option key="time-placeholder" value="" disabled>
-    Start time
-  </option>,
-  <option key="Flexible time" value="Flexible time">
-    Flexible time
-  </option>,
-  <option key="Morning" value="Morning">
-    Morning (8-10 AM)
-  </option>,
-  <option key="Evening" value="Evening">
-    Evening (3-5 PM)
-  </option>,
-  <option key="Exact" value="Exact">
-    Exact (Not advised)
-  </option>,
-];
-
 // Makes the first letter capital and the rest of the word lower case.
 const capitalizeFirstLetter = (word: string): string => {
   return word ? word.trim().charAt(0).toLocaleUpperCase() + word.slice(1).toLocaleLowerCase() : "";
@@ -102,355 +44,6 @@ const capitalizeFirstLetter = (word: string): string => {
 
 const FormWFormik: React.FC = () => {
   const formContainerRef = useRef<HTMLDivElement | null>(null);
-
-  const MyDateInput: React.FC<FI.MyDateInputProps> = ({ name, label, ...props }) => {
-    const { values, setFieldValue } = useFormikContext<FI.FormValues>();
-    const [field, meta] = useField(name);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFieldValue(name, e.target.value);
-      field.onChange(e);
-    };
-
-    return (
-      <>
-        <div className="col-md-3">
-          <label htmlFor={props.id || name} className="d-flex flex-column text-center">
-            {label}
-            {props.optional && (
-              <span className="form-text mt-0 extra-small text-center">(Optional)</span>
-            )}
-          </label>
-        </div>
-        <div className="col-md-4 col-6">
-          <input
-            type="date"
-            id={props.id || name}
-            className={`form-control ${meta.touched && meta.error ? "is-invalid" : ""}`}
-            min={minDate}
-            max={maxDate}
-            {...field}
-            value={values[name] ? values[name].toString() : ""}
-            onChange={handleChange}
-          />
-          {meta.touched && meta.error && <div className="invalid-feedback">{meta.error}</div>}
-        </div>
-      </>
-    );
-  };
-
-  const MyDateAndTimeBlock: React.FC<FI.MyDateAndTimeBlockProps> = ({ label, ...props }) => {
-    const { values, setFieldValue } = useFormikContext<FI.FormValues>();
-
-    const handleTimeChange = (e: React.FormEvent<HTMLSelectElement>) => {
-      const selectedValue = e.currentTarget.value;
-      const id = e.currentTarget.id;
-
-      if (id === "timeSlot1") {
-        setExactTimeFlag1(selectedValue === "Exact");
-        setEvnTimeFlag1(selectedValue === "Evening");
-      } else if (id === "timeSlot2") {
-        setExactTimeFlag2(selectedValue === "Exact");
-        setEvnTimeFlag2(selectedValue === "Evening");
-      } else if (id === "timeSlot3") {
-        setExactTimeFlag3(selectedValue === "Exact");
-        setEvnTimeFlag3(selectedValue === "Evening");
-      }
-    };
-
-    const largeMoveWarning = largeMove && (
-      <div className="row g-2 ">
-        <div className="col-auto text-danger text-start">
-          <strong>Note:</strong>
-        </div>
-        <div className="col d-flex text-danger text-start">
-          For larger moves, we strongly recommend starting as early as as possible
-        </div>
-      </div>
-    );
-
-    const evnTimeNote = (
-      <div className="row g-2 ">
-        <div className="col-auto text-start">
-          <strong>Note:</strong>
-        </div>
-        <div className="col d-flex text-start">The team might become available before 3 PM</div>
-      </div>
-    );
-
-    const exactTimeNote = (
-      <div className="row g-2 ">
-        <div className="col-auto text-start">
-          <strong>Note:</strong>
-        </div>
-        <div className="col d-flex text-start">
-          Selecting time around noon is not advised as it limits our ability to serve other
-          customers
-        </div>
-      </div>
-    );
-
-    const id = props.id;
-    const exactTimeFlags = {
-      "1": exactTimeFlag1,
-      "2": exactTimeFlag2,
-      "3": exactTimeFlag3,
-    };
-
-    const evnTimeFlags = {
-      "1": evnTimeFlag1,
-      "2": evnTimeFlag2,
-      "3": evnTimeFlag3,
-    };
-
-    const getFlag = (id: string, flags: { [key: string]: boolean }) => {
-      return flags[id] || false;
-    };
-
-    type ExactTimeKey = "exactTime1" | "exactTime2" | "exactTime3";
-    return (
-      <div className="row g-2 align-items-center mt-1" id={`dates-block-${id}`}>
-        <MyDateInput label={label} name={props.name} optional={props.optional} />
-
-        <div className="col-md-5 col-6" id={`w-timeSlot${id}`}>
-          <MySelect
-            addclassname="col"
-            id={`timeSlot${id}`}
-            name={`timeSlot${id}`}
-            addfunc={handleTimeChange}>
-            {timeOptions}
-          </MySelect>
-        </div>
-        {getFlag(id, exactTimeFlags) && (
-          <div
-            key={`ex-note-${id}`}
-            className="col-md-12 alert alert-primary align-items-center me-3"
-            role="alert">
-            {exactTimeNote}
-            {largeMoveWarning}
-            <div className="form-group">
-              <label htmlFor={`ex-time-${id}`}>Preferred Time:</label>
-              <DatePicker
-                id={`ex-time-${id}`}
-                selected={values[`exactTime${id}` as ExactTimeKey]}
-                onChange={(date) => date && setFieldValue(`exactTime${id}`, date)}
-                showTimeSelect
-                showTimeSelectOnly
-                minTime={setHours(setMinutes(new Date(), 0), 6)}
-                maxTime={setHours(setMinutes(new Date(), 0), 20)}
-                timeCaption="Time"
-                timeIntervals={30}
-                dateFormat="h:mm aa"
-                required
-              />
-            </div>
-          </div>
-        )}
-        {getFlag(id, evnTimeFlags) && (
-          <div
-            key={`evn-note-${id}`}
-            className="col-md-12 alert alert-primary align-items-center me-3"
-            role="alert">
-            {evnTimeNote}
-            {largeMoveWarning}
-            <div className="form-group">
-              <label htmlFor={`evn-time-${id}`}>What is the earliest time we can start:</label>
-              <DatePicker
-                id={`evn-time-${id}`}
-                selected={values[`evnTime${id}` as ExactTimeKey]}
-                onChange={(date) => date && setFieldValue(`evnTime${id}`, date)}
-                showTimeSelect
-                showTimeSelectOnly
-                minTime={setHours(setMinutes(new Date(), 0), 6)}
-                maxTime={setHours(setMinutes(new Date(), 0), 20)}
-                timeCaption="Time"
-                timeIntervals={30}
-                dateFormat="h:mm aa"
-                required
-              />
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const MyTextInput: React.FC<FI.MyTextInputProps> = ({ addfunc, ...props }) => {
-    // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
-    // which we can spread on <input>. We can use field meta to show an error
-    // message if the field is invalid and it has been touched (i.e. visited)
-    const [field, meta] = useField(props);
-    const { setFieldValue } = useFormikContext<FI.FormValues>();
-
-    const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const input = e.target.value;
-      const formattedInput = input
-        .replace(/[^0-9]/g, "") // Remove non-digit characters
-        .replace(/^(\d{3})(\d{0,3})(\d{0,4})$/, (_, g1, g2, g3) => {
-          // Format the input with dashes
-          let formattedNumber = g1;
-          if (g2) {
-            formattedNumber += "-" + g2;
-          }
-          if (g3) {
-            formattedNumber += "-" + g3;
-          }
-          return formattedNumber;
-        });
-
-      setFieldValue("phoneNumber", formattedInput);
-    };
-
-    // Use addfunc if provided. Use special onChange for phoneNumber. Otherwise, use default behavior.
-    const handleChange =
-      addfunc || (props.name === "phoneNumber" ? handlePhoneNumberChange : field.onChange);
-
-    return (
-      <>
-        {props.label && (
-          <label htmlFor={props.id || props.name} className="d-flex form-label fw-bold">
-            {props.label}
-          </label>
-        )}
-        <input
-          className={`text-input form-control ${props.addclassname} ${
-            meta.touched && meta.error ? "is-invalid" : ""
-          }`}
-          id={props.id || props.name}
-          {...field}
-          {...props}
-          onChange={handleChange}
-        />
-        {meta.touched && meta.error && <div className="invalid-feedback">{meta.error}</div>}
-      </>
-    );
-  };
-
-  const MyCheckbox: React.FC<FI.MyCheckboxProps> = ({ children, addfunc, req, wrap, ...props }) => {
-    // React treats radios and checkbox inputs differently from other input types: select and textarea.
-    // Formik does this too! When you specify `type` to useField(), it will
-    // return the correct bag of props for you -- a `checked` prop will be included
-    // in `field` alongside `name`, `value`, `onChange`, and `onBlur`
-    const [field, meta] = useField({ ...props, type: "checkbox" });
-
-    const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      field.onChange(event); // Execute the default onChange behavior
-
-      if (addfunc) {
-        addfunc(event);
-      }
-    };
-
-    const inputProps = {
-      ...props,
-      checked: field.value,
-      onChange: handleCheckboxChange,
-      required: req, // TODO: Remove this when bootstrap fixes its issues
-    };
-
-    return (
-      <div className={`form-check ${props.wrapperdivclassname}`}>
-        <label
-          htmlFor={props.id || props.name}
-          className={`checkbox-input form-check-label ${wrap ? "" : "text-nowrap"}`}>
-          <input
-            type="checkbox"
-            className="form-check-input"
-            id={props.id || props.name}
-            {...field}
-            {...inputProps}
-          />
-          {children}
-        </label>
-        {meta.touched && meta.error && <div className="invalid-feedback">{meta.error}</div>}
-      </div>
-    );
-  };
-
-  const MySelect: React.FC<FI.MySelectProps> = ({ addfunc, ...props }) => {
-    const [field, meta] = useField(props);
-    const handleInput = (event: React.FormEvent<HTMLSelectElement>) => {
-      if (addfunc) {
-        addfunc(event); // Execute the provided additional function
-      }
-      field.onChange(event); // Execute the default onChange behavior
-    };
-    return (
-      <>
-        {props.label && <label htmlFor={props.id || props.name}>{props.label}</label>}
-        <select
-          className={`form-select ${props.addclassname} ${
-            meta.touched && meta.error ? "is-invalid" : ""
-          }`}
-          onInput={handleInput}
-          id={props.id || props.name}
-          {...field}
-          {...props}
-        />
-        {meta.touched && meta.error && <div className="invalid-feedback">{meta.error}</div>}
-      </>
-    );
-  };
-
-  const MyAddressBlock: React.FC<FI.MyAddressBlockProps> = ({ location, ...props }) => {
-    const { setFieldValue } = useFormikContext<FI.FormValues>();
-
-    const handleZipCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const input = e.target.value;
-      const formattedInput = input.replace(/[^0-9]/g, "");
-      setFieldValue(`${location}Zip`, formattedInput);
-    };
-
-    return (
-      <div className="row g-2" id={props.id || props.name}>
-        <div className="col-12">
-          <MyTextInput name={`${location}StreetAddress`} type="text" placeholder="1234 Main St" />
-        </div>
-        <div className="col-12">
-          <MyTextInput
-            name={`${location}StreetAddress2`}
-            type="text"
-            placeholder="Apartment, unit, or office"
-          />
-        </div>
-        <div className="col-lg-7 col-md-7 col-sm-6 col-6">
-          <MyTextInput name={`${location}City`} type="text" placeholder="City" />
-        </div>
-        <div className="col-lg-2 col-md-2 col-sm-3 col-3">
-          <MySelect name={`${location}State`}>{stateOptions}</MySelect>
-        </div>
-        <div className="col-lg-3 col-md-3 col-sm-3 col-3">
-          <MyTextInput
-            minLength={5}
-            maxLength={5}
-            name={`${location}Zip`}
-            type="text"
-            placeholder="Zip"
-            addfunc={handleZipCodeChange}
-          />
-        </div>
-
-        {(location === "pickup" || location === "dest") && (
-          <div className="row g-1 ms-0">
-            <div className="col-md-6">
-              <MySelect addclassname="col" name={`${location}FloorSelector`}>
-                {floorOptions}
-              </MySelect>
-            </div>
-            <div className="col-md-5 ms-1 d-flex align-items-center">
-              <MyCheckbox name={`${location}ElevatorCheck`}>Elevator</MyCheckbox>
-              <MyCheckbox wrapperdivclassname="ms-4" name={`${location}LongWalkCheck`}>
-                Long Walk
-              </MyCheckbox>
-              <div className="ms-0 align-self-center">
-                <HelpIcon helpMessage="No extra charge. It is to help us better understand the task." />
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
 
   // Supplemental:
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -473,17 +66,36 @@ const FormWFormik: React.FC = () => {
   const [evnTimeFlag3, setEvnTimeFlag3] = useState(false);
   const [exactTimeFlag3, setExactTimeFlag3] = useState(false);
 
+  const flagSetters = {
+    setExactTimeFlag1,
+    setExactTimeFlag2,
+    setExactTimeFlag3,
+    setEvnTimeFlag1,
+    setEvnTimeFlag2,
+    setEvnTimeFlag3,
+  };
+
+  const flags = {
+    exactTimeFlag1,
+    evnTimeFlag1,
+    exactTimeFlag2,
+    evnTimeFlag2,
+    exactTimeFlag3,
+    evnTimeFlag3,
+    largeMove,
+  };
+
   // Packs Formik values into JSON and sends to the server API
-  const wrapAndSubmit = async (values: FI.FormValues) => {
+  const wrapAndSubmit = async (values: FormValues) => {
     const data = {
       firstName: capitalizeFirstLetter(values.firstName),
       lastName: capitalizeFirstLetter(values.lastName),
       email: values.email.trim().toLowerCase(),
       phoneNumber: values.phoneNumber,
-      pickupAddress: pickupAddress,
-      stopOneAddress: stopOneAddress,
-      stopTwoAddress: stopTwoAddress,
-      destAddress: destAddress,
+      pickupAddress,
+      stopOneAddress,
+      stopTwoAddress,
+      destAddress,
       pickupFloorSelector: values.pickupFloorSelector,
       pickupElevatorCheck: values.pickupElevatorCheck,
       pickupLongWalkCheck: values.pickupLongWalkCheck,
@@ -537,7 +149,7 @@ const FormWFormik: React.FC = () => {
     }
   };
 
-  const prepareAddressesForValidation = (values: FI.FormValues) => {
+  const prepareAddressesForValidation = (values: FormValues) => {
     addresses.length = 0; // Clear the array
     // Valid address format STRICTLY: "250 Montana Street, San Francisco, CA 94112"
     const formatAddress = (
@@ -605,7 +217,7 @@ const FormWFormik: React.FC = () => {
     );
   };
 
-  const validateSubmission = async (values: FI.FormValues): Promise<void> => {
+  const validateSubmission = async (values: FormValues): Promise<void> => {
     setShowModal(false);
 
     const validateAddress = async (address: string) => {
@@ -672,7 +284,7 @@ const FormWFormik: React.FC = () => {
     }
     // If the last address is valid and all addresses have been validated
     if (curInd === addresses.length) {
-      wrapAndSubmit(values);
+      await wrapAndSubmit(values);
     }
   };
 
@@ -865,7 +477,7 @@ const FormWFormik: React.FC = () => {
   };
 
   const OptionsBlock = () => {
-    const { values } = useFormikContext<FI.FormValues>();
+    const { values } = useFormikContext<FormValues>();
     useEffect(() => {
       setLargeMove(!smallMoves.includes(values.moveSize));
     }, [values.moveSize]);
@@ -946,7 +558,7 @@ const FormWFormik: React.FC = () => {
   };
 
   const HeavyItemsBlock = () => {
-    const { values, setFieldValue } = useFormikContext<FI.FormValues>();
+    const { values, setFieldValue } = useFormikContext<FormValues>();
 
     const handleHeavyItemsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, checked } = e.target;
@@ -1012,7 +624,7 @@ const FormWFormik: React.FC = () => {
   };
 
   const NumMoversBlock = () => {
-    const { values } = useFormikContext<FI.FormValues>();
+    const { values } = useFormikContext<FormValues>();
 
     useEffect(() => {
       // Update the value of moversSelector based on the changed fields
@@ -1094,9 +706,29 @@ const FormWFormik: React.FC = () => {
         <label htmlFor="date1" className="d-flex form-check-label fw-bold">
           Preferred Dates & Times:
         </label>
-        <MyDateAndTimeBlock label="1st choice:" name="date1" id="1" />
-        <MyDateAndTimeBlock label="2nd choice:" name="date2" id="2" optional={true} />
-        <MyDateAndTimeBlock label="3rd choice:" name="date3" id="3" optional={true} />
+        <MyDateAndTimeBlock
+          label="1st choice:"
+          name="date1"
+          id="1"
+          flagSetters={flagSetters}
+          flags={flags}
+        />
+        <MyDateAndTimeBlock
+          label="2nd choice:"
+          name="date2"
+          id="2"
+          optional={true}
+          flagSetters={flagSetters}
+          flags={flags}
+        />
+        <MyDateAndTimeBlock
+          label="3rd choice:"
+          name="date3"
+          id="3"
+          optional={true}
+          flagSetters={flagSetters}
+          flags={flags}
+        />
       </div>
     );
   };
@@ -1122,7 +754,7 @@ const FormWFormik: React.FC = () => {
   };
 
   const AgreeAndSubmitBlock = () => {
-    const { isSubmitting } = useFormikContext<FI.FormValues>();
+    const { isSubmitting } = useFormikContext<FormValues>();
     return (
       <div key="check-and-submit">
         <br />
@@ -1177,7 +809,7 @@ const FormWFormik: React.FC = () => {
   };
 
   const ModalWindow = () => {
-    const { values, setSubmitting } = useFormikContext<FI.FormValues>();
+    const { values, setSubmitting } = useFormikContext<FormValues>();
 
     const handleModalResponse = async (response: string) => {
       setInvalidAddress(false);
@@ -1307,7 +939,7 @@ const FormWFormik: React.FC = () => {
     }
   }, [isSubmitted]);
 
-  const initialValues: FI.FormValues = {
+  const initialValues: FormValues = {
     firstName: "",
     lastName: "",
     email: "",
@@ -1386,8 +1018,7 @@ const FormWFormik: React.FC = () => {
     phoneNumber: Yup.string()
       .required("Required")
       .test("valid-phone-number", "Invalid phone number", (value) => {
-        // Regular expression to validate phone number format (e.g., xxx-xxx-xxxx)
-        const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
+        const phoneRegex = /^\d{3}-\d{3}-\d{4}$/; // xxx-xxx-xxxx
         return phoneRegex.test(value);
       }),
 
@@ -1416,14 +1047,12 @@ const FormWFormik: React.FC = () => {
     acceptedTerms: Yup.boolean().oneOf([true], "Agree to proceed."),
   });
 
-  const onSubmit = async (values: FI.FormValues, { setSubmitting }: any) => {
+  const onSubmit = async (values: FormValues, { setSubmitting }: any) => {
     setSubmitting(true);
 
     try {
       prepareAddressesForValidation(values);
       await validateSubmission(values); // Wait for validateSubmission to finish before proceeding
-
-      //await wrapAndSubmit(values); // Wait for wrapAndSubmit to finish before proceeding
     } catch (error) {
       console.error("An error occurred:", error);
     } finally {
