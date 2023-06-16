@@ -218,7 +218,7 @@ const Calendar: React.FC<CalendarProps> = () => {
             className={`${todayStyle} ${cellClassName} ${isSelected ? " selected " : ""}`}
             data-date={i}
             onClick={() => handleDateClick(date)}>
-            {i}
+            {todayStyle === "" && i}
             <br />
             <br />
             <div className={`calendar-status ${dateInfo.style}`}>{dateInfo.dateStatus}</div>

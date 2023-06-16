@@ -61,13 +61,13 @@ const MyAddressBlock: React.FC<MyAddressBlockProps> = ({ location, ...props }) =
           placeholder="Apartment, unit, or office"
         />
       </div>
-      <div className="col-lg-7 col-md-7 col-sm-6 col-6">
+      <div className="col-lg-7 col-md-7 col-sm-7 col-12">
         <MyTextInput name={`${location}City`} type="text" placeholder="City" />
       </div>
-      <div className="col-lg-2 col-md-2 col-sm-3 col-3">
+      <div className="col-lg-2 col-md-2 col-sm-2 col-5">
         <MySelect name={`${location}State`}>{stateOptions}</MySelect>
       </div>
-      <div className="col-lg-3 col-md-3 col-sm-3 col-3">
+      <div className="col-lg-3 col-md-3 col-sm-3 col-7">
         <MyTextInput
           minLength={5}
           maxLength={5}
