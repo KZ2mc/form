@@ -39,7 +39,11 @@ const smallMoves = ["Few items", "Studio", "1-br", "Small storage", "Medium Stor
 
 // Makes the first letter capital and the rest of the word lower case.
 const capitalizeFirstLetter = (word: string): string => {
-  return word ? word.trim().charAt(0).toLocaleUpperCase() + word.slice(1).toLocaleLowerCase() : "";
+  if (word && word.length > 0) {
+    word = word.trim();
+    word.charAt(0).toLocaleUpperCase() + word.slice(1).toLocaleLowerCase();
+  }
+  return word;
 };
 
 const FormWFormik: React.FC = () => {
@@ -1017,8 +1021,8 @@ const FormWFormik: React.FC = () => {
   };
 
   const validationSchema = Yup.object().shape({
-    firstName: Yup.string().max(15, "Must be 15 characters or less").required("Required"),
-    lastName: Yup.string().max(20, "Must be 20 characters or less").required("Required"),
+    firstName: Yup.string().min(2, "Too short").max(15, "Too long").required("Required"),
+    lastName: Yup.string().min(2, "Too short").max(20, "Too long").required("Required"),
     email: Yup.string()
       .email("Invalid email")
       .required("Required")
