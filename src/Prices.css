@@ -1,0 +1,30 @@
+.table {
+    text-align: center;
+    max-width: 600px;
+  }
+  
+  .table-row {
+    border: 1px solid white;
+    font-size: 12px;
+  }
+
+  .top-row {
+    font-weight: bolder;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-size: 14px;
+  }
+  
+  .table-col {
+    border: 1px solid white;
+    padding: 8px;
+  }
+
+  .link-white {
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.link-white:hover {
+    color: #FFB600;
+}

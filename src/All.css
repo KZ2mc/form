@@ -1,0 +1,159 @@
+body {
+    color:rgb(48, 95, 206);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+h1 {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+p {
+    margin: 0;
+    padding: 3px;
+    margin-bottom: 1em;
+  }
+
+p-text {
+    margin-bottom: 1em;
+}
+
+hr {
+    height: 5px; /* Adjust the height to make it thicker */
+    background-color: white; /* Set the color of the horizontal line */
+    border: white; /* Remove the default border */
+    border-radius: 4px;
+    margin: 20px 0; /* Add some margin to create spacing around the divider */
+  }
+
+
+@media (min-width: 600px) {
+/* CSS rules for screens with a minimum width of xxx px */
+    body {
+        overflow-x: scroll; /* Enable horizontal scrolling */
+    }
+
+    /* Additional CSS rules specific to larger screens */
+    .container {
+        width: 600px; /* Set a maximum width for the container */
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+@media (max-width: 767px) {
+    .wrapper {
+      display: block;
+    }
+  
+    .content-div {
+      position: static;
+    }
+  }
+
+.font-black {
+    color: black;
+}
+
+.wrapper {
+    position: relative;
+    padding: 40px;
+    width: 100%;
+    background-color: white;
+    text-align: center;
+    place-items: center;
+}
+  
+.stripe-blue {
+    background-image: url('src/img/wood-bg.png');
+    color: white;
+}
+  
+.content-div {
+    max-width: 956px; 
+    width: 100%;
+    font-size: 1rem;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.narrow {
+    max-width: 856px; 
+}
+
+.framed-image {
+    padding: 5px;
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    object-position: center;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+    background-color: white;
+    margin-top: 10px;
+    margin-bottom: 25px;
+}
+
+.regular-image {
+    width: 60%;
+}
+
+.custom-button-light{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 30px;
+    background: none;
+    background-image: url('src/img/custom-btn.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    border: none;
+    cursor: pointer;
+    transition: background-image 0.5s ease;
+  
+    &:hover {
+      background-image: url('src/img/custom-btn-hover.png');
+    }
+  
+    &:active {
+      background-image: url('src/img/custom-btn-press.png');
+    }
+}
+
+.button-text {
+    color: black;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-size: 18px;
+}
+  
+.custom-button {
+    background-color: #f5f5f5;
+    color: #333;
+    border: 1px solid #333;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+}
+  
+.custom-button:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+.link-orange {
+    font-size: 20px;
+    color: #FFB600;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+.link-orange:hover {
+    color: rgb(255, 133, 4);
+}
+
+
+  

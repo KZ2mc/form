@@ -1,0 +1,250 @@
+@font-face {
+  font-family: 'Bangers';
+  src: url('src/fonts/Bangers-Regular.ttf') format('truetype');
+}
+
+.bangers {
+  font-family: 'Bangers', sans-serif;
+  font-size: 25px;
+  text-align: left;
+  padding: 10px;
+}
+
+@media (min-width: 600px) {
+  /* CSS rules for screens with a minimum width of xxx px */
+  body {
+    overflow-x: scroll; /* Enable horizontal scrolling */
+  }
+
+  /* Additional CSS rules specific to larger screens */
+  .container {
+    width: 600px; /* Set a maximum width for the container */
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  .wrapper {
+    display: block;
+  }
+
+  .content-div {
+    position: static;
+  }
+
+  .badgee {
+    position: static;
+    margin-bottom: 10px;
+  }
+
+  .arrow0,
+  .arrow1,
+  .arrow2,
+  .arrow3 {
+    position: static;
+    margin-bottom: 10px;
+  }
+
+  .counter-wrapper {
+    position: static;
+  }
+}
+
+body {
+  background-image: url('src/img/tall_bg.jpeg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  color:rgb(48, 95, 206);
+}
+
+.bg-div {
+  
+}
+
+.scrolled-backgroundz {
+  background-color: #f5f5f5; 
+  transition: background-color 0.3s ease; 
+}
+
+.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40rem;
+}
+
+.semi-transparent-div {
+  background-color: rgba(0, 0, 0, 0.5); /* Set the background color with opacity */
+  text-align: center;
+  width: 100%;
+  padding: 20px;
+}
+
+.semi-transparent-div p {
+  color: white;
+  font-size: 18px;
+}
+
+.semi-transparent-div h1 {
+  color: white;
+}
+
+.map-img {
+  height: auto;
+  width: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.text-div {
+  max-width: 600px;
+}
+
+.carousel-container {
+  width: 100%;
+}
+
+.carousel-item {
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.image-description {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+}
+
+.badgee {
+  height: auto;
+  width: 10rem;
+}
+
+.arrow {
+  height: auto;
+  width: 80px;
+}
+
+.digit {
+  width: 125%;
+  object-fit: contain;
+}
+
+.digits-row {
+  margin-left: -20% !important;
+}
+
+.clipboards {
+  width: 50rem;
+  height: auto;
+}
+
+.price-card {
+  padding: 5px;
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  object-position: center;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+  border-radius: 10px;
+  background: white;
+  color:black;
+}
+
+.transparent-prices {
+  position: absolute;
+  left: 10rem;
+  width: 10rem;
+  height: auto;
+}
+
+.item-col {
+  max-height: 8rem;
+  max-width: 8rem;
+}
+
+.item-text {
+  font-size: 12px;
+}
+
+.review-card {
+  font-size: 14px;
+  width: 93%;
+  height: 360px;
+  padding: 15px;
+  margin: 15px 7px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+  border-radius: 10px;
+  justify-content: center;
+  align-items: center;
+  background-color:white;
+  color:rgb(48, 95, 206);
+}
+
+.review-text {
+  color: gray;
+}
+
+.reviewer-icon {
+  width: 75px;
+}
+
+.stars {
+  width: 150px;
+  padding: 5px;
+}
+
+.source-logo {
+  width: 40px;
+}
+
+.elite {
+  font-weight: bold;
+  color: rgb(244, 131, 1);
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.btn-group {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  background-image: url('src/img/btn-bg.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.selector-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 30px;
+  background: none;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  cursor: pointer;
+  transition: background-image 0.5s ease;
+
+}
+.selector-button:hover {
+  background-image: url('src/img/btn-ring-light.png');
+}
+
+.selector-button:active,
+.selector-button.active {
+  background-image: url('src/img/custom-btn.png');
+}

@@ -1,0 +1,43 @@
+.header {
+    z-index: 99;
+}
+
+.header.fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 99;
+}
+
+.header-container {
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+    z-index: 99;
+}
+
+.logo-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 10px;
+}
+
+.logo {
+    position: absolute;
+    margin-left: -20rem;
+}
+
+.logo-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}

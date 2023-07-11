@@ -1,0 +1,23 @@
+.container {
+  width: 650px !important;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.footer-link {
+  font-size: 10px;
+  color: grey;
+  text-decoration: none;
+}
+  
+.footer {
+  padding-top: 15px;
+  background-color: rgb(43, 43, 22);
+}
+  
+.footer-link:hover {
+  color: white;
+}
+
+
+

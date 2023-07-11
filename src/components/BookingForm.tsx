@@ -944,12 +944,22 @@ const FormWFormik: React.FC = () => {
   };
 
   // Centers on the Thank You message after submission
+  /*
   useEffect(() => {
     if (isSubmitted && formContainerRef.current) {
       scroller.scrollTo("thankYouMessage", {
         duration: 500,
         smooth: true,
-        offset: -100, // Adjust the offset as needed
+        //offset: -100, // Adjust the offset as needed
+      });
+    }
+  }, [isSubmitted]);*/
+
+  useEffect(() => {
+    if (isSubmitted && formContainerRef.current) {
+      formContainerRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
       });
     }
   }, [isSubmitted]);

@@ -18,7 +18,7 @@ const MyAddressBlock: React.FC<MyAddressBlockProps> = ({ location, ...props }) =
 
   const floorOptions = [
     <option key="floor-placeholder" value="" disabled>
-      Most of the stuff goes to...
+      Most of the stuff will be on...
     </option>,
     <option key="Ground" value="Ground">
       Ground floor
