@@ -20,13 +20,15 @@ import Blog from "./Blog";
 import Blog_movers_or_uhaul from "./Blog-movers-or-uhaul";
 import Blog_estimate_move_size from "./Blog-estimate-move-size";
 import Blog_what_to_expect from "./Blog-what-to-expect";
+import Blog_prepare_for_move from "./Blog-prepare-for-move";
+import Blog_choose_mc from "./Blog-choose-mc";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
+  /*<React.StrictMode>
     <Calendar year={2023} month={4} />
     <BookingForm />
   </React.StrictMode>
-  /*
+  */
   <React.StrictMode>
     <Router>
       <Routes>
@@ -46,7 +48,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <Route path="/blog-hire-movers-or-rent-uhaul" element={<Blog_movers_or_uhaul />} />
         <Route path="/blog-estimate-move-size" element={<Blog_estimate_move_size />} />
         <Route path="/blog-what-to-expect" element={<Blog_what_to_expect />} />
+        <Route path="/blog-how-to-prepare" element={<Blog_prepare_for_move />} />
+        <Route path="/blog-how-to-choose-moving-company" element={<Blog_choose_mc />} />
       </Routes>
     </Router>
-  </React.StrictMode>*/
+  </React.StrictMode>
 );

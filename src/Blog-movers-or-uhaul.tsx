@@ -18,7 +18,7 @@ const Blog_movers_or_uhaul: React.FC = () => {
         <div className="content-div px-5 narrow">
           <div className="d-flex justify-content-center align-items-center text-start">
             <article>
-              <h1 className="text-center">Rent a U-Haul or Hire Movers?</h1>
+              <h2 className="text-center py-3">Rent a U-Haul or Hire Movers?</h2>
               <p>
                 Let's face it, moving can be costly. Trying to be frugal, many people wonder whether
                 they should hire professional movers or just rent a truck and move with the help of
@@ -36,14 +36,14 @@ const Blog_movers_or_uhaul: React.FC = () => {
                     </p>
                   </div>
                   <div className="col">
-                    <img className="img-fluid framed-image" src="src/img/movers-or-uhaul.jpg" />
+                    <img className="img-fluid framed-image" src="src/img/movers-or-uhaul.webp" />
                   </div>
                 </div>
                 <div className="row align-items-center">
                   <div className="col">
                     <img
                       className="img-fluid framed-image"
-                      src="src/img/kz2-moving-company-hire-movers.jpg"
+                      src="src/img/kz2-moving-company-hire-movers.webp"
                     />
                   </div>
                   <div className="col">
@@ -72,7 +72,7 @@ const Blog_movers_or_uhaul: React.FC = () => {
                     </p>
                   </div>
                   <div className="col">
-                    <img className="img-fluid framed-image" src="src/img/uhaul-or-movers.jpg" />
+                    <img className="img-fluid framed-image" src="src/img/uhaul-or-movers.webp" />
                   </div>
                 </div>
                 <div className="row">
@@ -80,7 +80,7 @@ const Blog_movers_or_uhaul: React.FC = () => {
                     <img
                       style={{ width: "150px" }}
                       className="position-absolute"
-                      src="src/img/tv-drop-bubble.png"
+                      src="src/img/tv-drop-bubble.webp"
                     />
                     <img className="img-fluid framed-image mt-5" src="src/img/tv_drop.gif" />
                   </div>
@@ -118,7 +118,7 @@ const Blog_movers_or_uhaul: React.FC = () => {
                   <div className="col">
                     <img
                       className="img-fluid framed-image"
-                      src="src/img/kz2-moving-company-local-moving.png"
+                      src="src/img/kz2-moving-company-local-moving.webp"
                     />
                   </div>
                 </div>
@@ -143,7 +143,7 @@ const Blog_movers_or_uhaul: React.FC = () => {
                   <div className="col">
                     <img
                       className="img-fluid framed-image"
-                      src="src/img/kz2-moving-company-furniture-assembly.png"
+                      src="src/img/kz2-moving-company-furniture-assembly.webp"
                     />
                   </div>
                   <div className="col">
@@ -195,24 +195,24 @@ const Blog_movers_or_uhaul: React.FC = () => {
             <h4>Related posts</h4>
             <div className="row pb-3">
               <div className="col pb-2 mx-2 post-mini-card">
-                <a href="" className="post-link">
+                <a href="blog-how-to-choose-moving-company" className="post-link">
                   <img
-                    src="src/img/kz2-moving-company-heavy-items-moving.png"
+                    src="src/img/kz2-moving-company-heavy-items-moving.webp"
                     className="img-fluid framed-image"
                   />
                   <h6>How to choose a moving company</h6>
                 </a>
               </div>
               <div className="col pb-2 mx-2 post-mini-card">
-                <a href="" className="post-link">
-                  <img src="src/img/preparing-for-moving.jpg" className="img-fluid framed-image" />
+                <a href="blog-how-to-prepare" className="post-link">
+                  <img src="src/img/preparing-for-moving.webp" className="img-fluid framed-image" />
                   <h6>How to prepare for a move</h6>
                 </a>
               </div>
               <div className="col pb-2 mx-2 post-mini-card">
                 <a href="blog-what-to-expect" className="post-link">
                   <img
-                    src="src/img/kz2-moving-company-residential-moving.png"
+                    src="src/img/kz2-moving-company-residential-moving.webp"
                     className="img-fluid framed-image"
                   />
                   <h6>What to expect from your movers</h6>

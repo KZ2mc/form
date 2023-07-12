@@ -18,7 +18,7 @@ const Blog_estimate_move_size: React.FC = () => {
         <div className="content-div px-5 narrow">
           <div className="d-flex justify-content-center align-items-center text-start">
             <article>
-              <h1 className="text-center">How to estimate your move size</h1>
+              <h2 className="text-center py-3">How to estimate your move size</h2>
               <p>
                 We are all unique and so are our lifestyles and homes. The size of your space is not
                 always a good way of estimating the size of your move. There are Studios filled up
@@ -31,7 +31,7 @@ const Blog_estimate_move_size: React.FC = () => {
               <div className="mx-5 px-5">
                 <img
                   className="img-fluid framed-image"
-                  src="src/img/how-to-estimate-move-size.jpg"
+                  src="src/img/how-to-estimate-move-size.webp"
                 />
               </div>
 
@@ -221,24 +221,24 @@ const Blog_estimate_move_size: React.FC = () => {
             <h4>Related posts</h4>
             <div className="row pb-3">
               <div className="col pb-2 mx-2 post-mini-card">
-                <a href="" className="post-link">
+                <a href="blog-how-to-choose-moving-company" className="post-link">
                   <img
-                    src="src/img/kz2-moving-company-heavy-items-moving.png"
+                    src="src/img/kz2-moving-company-heavy-items-moving.webp"
                     className="img-fluid framed-image"
                   />
                   <h6>How to choose a moving company</h6>
                 </a>
               </div>
               <div className="col pb-2 mx-2 post-mini-card">
-                <a href="" className="post-link">
-                  <img src="src/img/preparing-for-moving.jpg" className="img-fluid framed-image" />
+                <a href="blog-how-to-prepare" className="post-link">
+                  <img src="src/img/preparing-for-moving.webp" className="img-fluid framed-image" />
                   <h6>How to prepare for a move</h6>
                 </a>
               </div>
               <div className="col pb-2 mx-2 post-mini-card">
                 <a href="blog-what-to-expect" className="post-link">
                   <img
-                    src="src/img/kz2-moving-company-residential-moving.png"
+                    src="src/img/kz2-moving-company-residential-moving.webp"
                     className="img-fluid framed-image"
                   />
                   <h6>What to expect from your movers</h6>

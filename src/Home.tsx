@@ -62,7 +62,7 @@ const Home: React.FC = () => {
             <div className="col-5">
               <img
                 className="img-fluid"
-                src="src/img/hello-guy.png"
+                src="src/img/hello-guy.webp"
                 alt="Wellcome to KZ2 Moving Company"
               />
             </div>
@@ -88,39 +88,39 @@ const Home: React.FC = () => {
 
       const items = [
         {
-          src: "src/img/kz2-moving-company-long-distance-moving.png",
+          src: "src/img/kz2-moving-company-long-distance-moving.webp",
           description: "Long Distance Moving",
         },
         {
-          src: "src/img/kz2-moving-company-local-moving.png",
+          src: "src/img/kz2-moving-company-local-moving.webp",
           description: "Local Moving",
         },
         {
-          src: "src/img/kz2-moving-company-heavy-items-moving.png",
+          src: "src/img/kz2-moving-company-heavy-items-moving.webp",
           description: "Heavy Items Moving",
         },
         {
-          src: "src/img/kz2-moving-company-commercial-moving.png",
+          src: "src/img/kz2-moving-company-commercial-moving.webp",
           description: "Commercial Moving",
         },
         {
-          src: "src/img/kz2-moving-company-residential-moving.png",
+          src: "src/img/kz2-moving-company-residential-moving.webp",
           description: "Residential Moving",
         },
         {
-          src: "src/img/kz2-moving-company-piano-moving.png",
+          src: "src/img/kz2-moving-company-piano-moving.webp",
           description: "Piano Moving",
         },
         {
-          src: "src/img/kz2-moving-company-furniture-assembly.png",
+          src: "src/img/kz2-moving-company-furniture-assembly.webp",
           description: "Furniture Assembly",
         },
         {
-          src: "src/img/kz2-moving-company-wrapping-for-storage.png",
+          src: "src/img/kz2-moving-company-wrapping-for-storage.webp",
           description: "Wrapping for storage",
         },
         {
-          src: "src/img/kz2-moving-company-item-protection.png",
+          src: "src/img/kz2-moving-company-item-protection.webp",
           description: "Item Protection",
         },
       ];
@@ -182,7 +182,7 @@ const Home: React.FC = () => {
       <div className="wrapper">
         <div className="d-flex flex-column align-items-center justify-content-center content-div">
           <h4>From San Francisco Bay Area to anywhere in the mainland US</h4>
-          <img src="src/img/map.png" className="img-fluid" />
+          <img src="src/img/map.webp" className="img-fluid" />
           <h5>
             Whether you are looking for local movers or long-distance movers - you are in the right
             place!
@@ -206,7 +206,7 @@ const Home: React.FC = () => {
 
       return digits.map((digit, index) => (
         <div className="col-3" key={index}>
-          <img className="digit" src={`src/img/digits/${digit}.png`} alt={digit} />
+          <img className="digit" src={`src/img/digits/${digit}.webp`} alt={digit} />
         </div>
       ));
     };
@@ -222,7 +222,7 @@ const Home: React.FC = () => {
                     href="https://www.yelp.com/biz/kz2-moving-company-san-francisco"
                     target="_blank"
                     rel="noopener noreferrer">
-                    <img className="badgee" src="src/img/yelp-badge.png" alt="Yelp badge" />
+                    <img className="badgee" src="src/img/yelp-badge.webp" alt="Yelp badge" />
                   </a>
                 </div>
               </div>
@@ -235,7 +235,7 @@ const Home: React.FC = () => {
                     href="https://www.google.com/maps/place/KZ2+Moving+Company/@37.823457,-122.3681244,17.49z/data=!4m6!3m5!1s0xad28b8015c8f1f6d:0x8bcf0c6ded7cbb68!8m2!3d37.823983!4d-122.3667506!16s%2Fg%2F11j_2w01mv?entry=tts&shorturl=1"
                     target="_blank"
                     rel="noopener noreferrer">
-                    <img className="badgee" src="src/img/google-badge.png" alt="Google badge" />
+                    <img className="badgee" src="src/img/google-badge.webp" alt="Google badge" />
                   </a>
                 </div>
               </div>
@@ -248,7 +248,7 @@ const Home: React.FC = () => {
                     rel="noopener noreferrer">
                     <img
                       className="badgee"
-                      src="src/img/thumbtack-badge.png"
+                      src="src/img/thumbtack-badge.webp"
                       alt="Thumbtack badge"
                     />
                   </a>
@@ -270,7 +270,7 @@ const Home: React.FC = () => {
                     rel="noopener noreferrer">
                     <img
                       className="badgee"
-                      src="src/img/coc-badge.png"
+                      src="src/img/coc-badge.webp"
                       alt="Chamber of commerce badge"
                     />
                   </a>
@@ -306,7 +306,7 @@ const Home: React.FC = () => {
             Our pricing is easy to understand and includes everything you need for a smooth move
           </h4>
           <div className="clipboards">
-            <img src="src/img/clipboards.png" alt="companies comparison" className="img-fluid" />
+            <img src="src/img/clipboards.webp" alt="companies comparison" className="img-fluid" />
           </div>
         </div>
       </div>
@@ -332,7 +332,7 @@ const Home: React.FC = () => {
         <div className="row">
           <div className="col-3">
             <div className="price-card">
-              <img src="src/img/2-movers.png" alt="2 movers" className="img-fluid" />
+              <img src="src/img/2-movers.webp" alt="2 movers" className="img-fluid" />
               <p className="m-0">
                 <b>2 movers</b>
               </p>
@@ -342,7 +342,7 @@ const Home: React.FC = () => {
           </div>
           <div className="col-3">
             <div className="price-card">
-              <img src="src/img/3-movers.png" alt="3 movers" className="img-fluid" />
+              <img src="src/img/3-movers.webp" alt="3 movers" className="img-fluid" />
               <p className="m-0">
                 <b>3 movers</b>
               </p>
@@ -352,7 +352,7 @@ const Home: React.FC = () => {
           </div>
           <div className="col-3">
             <div className="price-card">
-              <img src="src/img/4-movers.png" alt="4 movers" className="img-fluid" />
+              <img src="src/img/4-movers.webp" alt="4 movers" className="img-fluid" />
               <p className="m-0">
                 <b>4 movers</b>
               </p>
@@ -363,7 +363,7 @@ const Home: React.FC = () => {
           <div className="col-3">
             <div className="price-card">
               <div className="d-flex flex-column justify-content-center pt-5">
-                <img src="src/img/more-movers.png" alt="more movers" className="img-fluid pb-4" />
+                <img src="src/img/more-movers.webp" alt="more movers" className="img-fluid pb-4" />
               </div>
               <p className="m-0">
                 <b>More movers</b>
@@ -428,7 +428,7 @@ const Home: React.FC = () => {
         <div className="row">
           <div className="col-3">
             <div className="price-card">
-              <img src="src/img/piano.png" alt="piano" className="img-fluid" />
+              <img src="src/img/piano.webp" alt="piano" className="img-fluid" />
               <p className="m-0">
                 <b>Piano</b>
               </p>
@@ -438,7 +438,7 @@ const Home: React.FC = () => {
           </div>
           <div className="col-3">
             <div className="price-card">
-              <img src="src/img/safe.png" alt="large safe moving" className="img-fluid" />
+              <img src="src/img/safe.webp" alt="large safe moving" className="img-fluid" />
               <p className="m-0">
                 <b>Large Safe</b>
               </p>
@@ -448,7 +448,11 @@ const Home: React.FC = () => {
           </div>
           <div className="col-3">
             <div className="price-card">
-              <img src="src/img/treadmill.png" alt="heavy treadmill moving" className="img-fluid" />
+              <img
+                src="src/img/treadmill.webp"
+                alt="heavy treadmill moving"
+                className="img-fluid"
+              />
               <p className="m-0">
                 <b>Heavy Treadmill</b>
               </p>
@@ -459,7 +463,7 @@ const Home: React.FC = () => {
           <div className="col-3">
             <div className="price-card">
               <img
-                src="src/img/other-heavy.png"
+                src="src/img/other-heavy.webp"
                 alt="other heavy items moving"
                 className="img-fluid"
               />
@@ -527,7 +531,7 @@ const Home: React.FC = () => {
             <div className="col-2"></div>
             <div className="col-2">
               <div className="row">
-                <img className="img-fluid" src="src/img/transparent-prices.png" />
+                <img className="img-fluid" src="src/img/transparent-prices.webp" />
               </div>
               <div className="row">
                 <h5 className="text-center mt-3">Our transparent rates include:</h5>
@@ -537,19 +541,19 @@ const Home: React.FC = () => {
             <div className="col">
               <div className="d-flex flex-column align-items-center justify-content-center content-div">
                 <div className="row">
-                  {getGridItem("src/img/wardrobe.png", "Wardrobe boxes")}
-                  {getGridItem("src/img/truck.png", "Moving Truck")}
-                  {getGridItem("src/img/insurance.png", "Insurance")}
+                  {getGridItem("src/img/wardrobe.webp", "Wardrobe boxes")}
+                  {getGridItem("src/img/truck.webp", "Moving Truck")}
+                  {getGridItem("src/img/insurance.webp", "Insurance")}
                 </div>
                 <div className="row">
-                  {getGridItem("src/img/packing-supplies.png", "Boxes & Supplies")}
-                  {getGridItem("src/img/moving-blankets.png", "Moving Blankets")}
-                  {getGridItem("src/img/floor-protection.png", "Floor Protection")}
+                  {getGridItem("src/img/packing-supplies.webp", "Boxes & Supplies")}
+                  {getGridItem("src/img/moving-blankets.webp", "Moving Blankets")}
+                  {getGridItem("src/img/floor-protection.webp", "Floor Protection")}
                 </div>
                 <div className="row">
-                  {getGridItem("src/img/furniture-assembly.png", "Furniture Assembly")}
-                  {getGridItem("src/img/packing-service.png", "Packing Service")}
-                  {getGridItem("src/img/tax.png", "Taxes")}
+                  {getGridItem("src/img/furniture-assembly.webp", "Furniture Assembly")}
+                  {getGridItem("src/img/packing-service.webp", "Packing Service")}
+                  {getGridItem("src/img/tax.webp", "Taxes")}
                 </div>
               </div>
             </div>
@@ -582,7 +586,7 @@ const Home: React.FC = () => {
       const items = [
         {
           name: "Marina T.",
-          src: "src/img/Marina.png",
+          src: "src/img/Marina.webp",
           location: "Yountville, CA",
           reviews: "130",
           date: "6/26/2022",
@@ -594,7 +598,7 @@ const Home: React.FC = () => {
         },
         {
           name: "Vince C.",
-          src: "src/img/Vince.png",
+          src: "src/img/Vince.webp",
           location: "Cotati, CA",
           reviews: "286",
           date: "10/2/2021",
@@ -605,7 +609,7 @@ const Home: React.FC = () => {
         },
         {
           name: "Nikky M.",
-          src: "src/img/Nikky.png",
+          src: "src/img/Nikky.webp",
           location: "San Francisco",
           reviews: "14",
           date: "5/9/2021",
@@ -616,7 +620,7 @@ const Home: React.FC = () => {
         },
         {
           name: "Carlos G.",
-          src: "src/img/carlos.png",
+          src: "src/img/carlos.webp",
           location: "San Francisco",
           reviews: "25",
           date: "9/11/2021",
@@ -627,7 +631,7 @@ const Home: React.FC = () => {
         },
         {
           name: "Lauren M.",
-          src: "src/img/Lauren.png",
+          src: "src/img/Lauren.webp",
           location: "San Francisco",
           reviews: "33",
           date: "4/11/2023",
@@ -638,7 +642,7 @@ const Home: React.FC = () => {
         },
         {
           name: "Christina Z.",
-          src: "src/img/Christina.png",
+          src: "src/img/Christina.webp",
           location: "Sunnyvale, CA",
           reviews: "62",
           date: "4/17/2021",
@@ -676,12 +680,12 @@ const Home: React.FC = () => {
             <div className="row align-items-center justify-content-center px-5">
               <div className="col-2"></div>
               <div className="col-8">
-                <img className="img-fluid stars" src="src/img/stars.png" alt="5-stars" />
+                <img className="img-fluid stars" src="src/img/stars.webp" alt="5-stars" />
               </div>
               <div className="col-2">
                 <img
                   className="source-logo"
-                  src={`src/img/${item.source}-logo.png`}
+                  src={`src/img/${item.source}-logo.webp`}
                   alt="yelp logo"
                 />
               </div>
@@ -727,7 +731,7 @@ const Home: React.FC = () => {
   };
 
   //===================================================//
-  //<BackgroundImageDiv imageUrl="src/img/bg1.png">{<p>Some content</p>}</BackgroundImageDiv>
+  //<BackgroundImageDiv imageUrl="src/img/bg1.webp">{<p>Some content</p>}</BackgroundImageDiv>
   return (
     <div className={isScrolled ? "scrolled-background" : ""}>
       <Base>
