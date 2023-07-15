@@ -1,5 +1,6 @@
 import Base from "./Base";
 import "./All.css";
+import MyButton from "./MyButton";
 
 const FurnitureAssembly: React.FC = () => {
   return (
@@ -32,7 +33,7 @@ const FurnitureAssembly: React.FC = () => {
             <div className="text-center">
               <img
                 className="framed-image regular-image"
-                src="src/img/kz2-moving-company-furniture-assembly.png"
+                src="src/img/kz2-moving-company-furniture-assembly.webp"
                 alt="furniture assembly and disassembly"
               />
             </div>
@@ -58,12 +59,8 @@ const FurnitureAssembly: React.FC = () => {
             </p>
           </div>
           <div className="pt-2 pb-5">
-            <button className="custom-button-light">
-              <span className="button-text">Get Quote</span>
-            </button>
-            <button className="custom-button-light">
-              <span className="button-text">Book Now</span>
-            </button>
+            <MyButton link="get-quote" text="Get Quote" />
+            <MyButton link="book" text="Book Now" />
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@ import React from "react";
 import Base from "./Base";
 import "./All.css";
 import "./Blog.css";
+import MyButton from "./MyButton";
 
 const Blog_choose_mc: React.FC = () => {
   const Divider: React.FC = () => {
@@ -100,9 +101,7 @@ const Blog_choose_mc: React.FC = () => {
                 stress-free and successful.
               </p>
               <div className="text-center">
-                <button className="custom-button-light">
-                  <span className="button-text">Get Quote</span>
-                </button>
+                <MyButton link="get-quote" text="Get Quote" />
               </div>
             </article>
           </div>

@@ -1,5 +1,6 @@
 import Base from "./Base";
 import "./All.css";
+import MyButton from "./MyButton";
 
 const Services: React.FC = () => {
   const getListItem = (label: string, description: string, src: string) => {
@@ -119,12 +120,8 @@ const Services: React.FC = () => {
             <p>Moves 400 miles far and similar distances are done overnight.</p>
           </div>
           <div className="pt-2 pb-5">
-            <button className="custom-button-light">
-              <span className="button-text">Get Quote</span>
-            </button>
-            <button className="custom-button-light">
-              <span className="button-text">Book Now</span>
-            </button>
+            <MyButton link="get-quote" text="Get Quote" />
+            <MyButton link="book" text="Book Now" />
           </div>
         </div>
       </div>

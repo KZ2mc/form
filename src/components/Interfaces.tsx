@@ -44,7 +44,6 @@ export interface FormValues {
   otherHeavyItem: boolean;
   selectedHeavyItems: string[];
   inputHeavyDetails: string;
-  defaultMovers: boolean;
   selectedMovers: string;
 
   date1: string;
@@ -65,6 +64,24 @@ export interface FormValues {
   additionalInfo: string;
   acceptedTerms: boolean;
 }
+
+export interface QuoteFormValues {
+  [key: string]: string | boolean | string[] | Date;
+  pickupZip: string;
+  destZip: string;
+
+  moveSize: string;
+  packing: boolean;
+
+  piano: boolean;
+  gunSafe: boolean;
+  otherHeavyItem: boolean;
+
+  date1: string;
+  date2: string;
+  date3: string;
+}
+
 export interface FlagSetters {
   setExactTimeFlag1: (value: boolean) => void;
   setEvnTimeFlag1: (value: boolean) => void;
@@ -87,6 +104,7 @@ export interface Flags {
 export interface MyDateInputProps {
   name: string;
   label: string;
+  quote?: boolean;
   optional?: boolean;
   id?: string;
 }
@@ -106,7 +124,7 @@ export interface MyTextInputProps {
   name: string;
   type: string;
   placeholder: string;
-  id?: string; // Add the id property to the interface
+  id?: string;
   minLength?: number;
   maxLength?: number;
   rows?: number;
@@ -132,11 +150,58 @@ export interface MySelectProps {
   wrapperdivclassname?: string;
   addfunc?: (e: React.FormEvent<HTMLSelectElement>) => void;
   id?: string;
-  children: React.ReactNode; // Add children prop
+  children: React.ReactNode;
 }
 
 export interface MyAddressBlockProps {
   location: string;
   name: string;
   id?: string;
+}
+
+export interface MyButtonProps {
+  link: string;
+  text: string;
+  addfunc?: () => void;
+  submit?: boolean;
+  dark?: boolean;
+}
+
+export interface Request {
+  pickup: string;
+  dropoff: string;
+  name: string;
+  redFlag: string;
+  status: string;
+  date1Availability: string;
+  date2Availability: string;
+  date3Availability: string;
+  replyText: string;
+  otherHeavyItems: string;
+  estDrivingTime: string;
+  estDDT: string;
+  estText: string;
+  estTotalTime: string;
+  bedrooms: number;
+  distance: number;
+  priority: number;
+  cost: number;
+  workTime: number;
+  recomMovers: number;
+  recomRate: number;
+  estTotalCost: number;
+  estTotalCostCard: number;
+  isLong: boolean;
+  doubleDrive: boolean;
+  decision: boolean;
+  pianoMove: boolean;
+  offerDates: boolean;
+  summerRate: boolean;
+  packing: boolean;
+  generalReply: boolean;
+  travelTime: number | null;
+  date1: string | null;
+  date2: string | null;
+  date3: string | null;
+  alternativeDates: string[];
 }

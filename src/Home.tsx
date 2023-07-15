@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Base from "./Base";
-import { Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap/dist/css/bootstrap.css";
@@ -9,6 +8,7 @@ import "./All.css";
 
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
+import MyButton from "./MyButton";
 
 const Home: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -35,14 +35,6 @@ const Home: React.FC = () => {
   const [activeButton, setActiveButton] = useState("local");
   const handleButtonClick = (buttonId: React.SetStateAction<string>) => {
     setActiveButton(buttonId);
-  };
-
-  const GetQuoteButton = () => {
-    return (
-      <button className="custom-button-light">
-        <span className="button-text">Get Quote</span>
-      </button>
-    );
   };
 
   const HelloBlock = () => {
@@ -165,13 +157,8 @@ const Home: React.FC = () => {
           <Carousel />
 
           <p>Packing, Furniture assembly, or Extra-heavy items - we are here to help you with it</p>
-          <Button className="custom-button-light" href="#services">
-            <span className="button-text">Our Services</span>
-          </Button>
 
-          <button className="custom-button-light">
-            <span className="button-text">Our Services</span>
-          </button>
+          <MyButton link="services" text="Our Services" />
         </div>
       </div>
     );
@@ -187,127 +174,6 @@ const Home: React.FC = () => {
             Whether you are looking for local movers or long-distance movers - you are in the right
             place!
           </h5>
-        </div>
-      </div>
-    );
-  };
-
-  const BadgesBlock = () => {
-    function getDaysSinceDate(targetDate: Date): number {
-      const timeDiff = new Date().getTime() - targetDate.getTime(); // Difference in milliseconds
-      const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24)); // Convert milliseconds to days
-      return daysDiff;
-    }
-
-    const numCustomers = 120 + getDaysSinceDate(new Date("2021-01-01"));
-
-    const renderNumberDigits = (number: number): React.ReactNode => {
-      const digits = number.toString().split("");
-
-      return digits.map((digit, index) => (
-        <div className="col-3" key={index}>
-          <img className="digit" src={`src/img/digits/${digit}.webp`} alt={digit} />
-        </div>
-      ));
-    };
-
-    return (
-      <div className="wrapper">
-        <div className="container text-center content-div">
-          <div className="row">
-            <div className="col-6">
-              <div className="row p-3">
-                <div className="col-5">
-                  <a
-                    href="https://www.yelp.com/biz/kz2-moving-company-san-francisco"
-                    target="_blank"
-                    rel="noopener noreferrer">
-                    <img className="badgee" src="src/img/yelp-badge.webp" alt="Yelp badge" />
-                  </a>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-5 pb-5 d-flex justify-content-end">
-                  <img className="arrow" src="src/img/arrow0.png" alt="an arrow" />
-                </div>
-                <div className="col-5 pt-3">
-                  <a
-                    href="https://www.google.com/maps/place/KZ2+Moving+Company/@37.823457,-122.3681244,17.49z/data=!4m6!3m5!1s0xad28b8015c8f1f6d:0x8bcf0c6ded7cbb68!8m2!3d37.823983!4d-122.3667506!16s%2Fg%2F11j_2w01mv?entry=tts&shorturl=1"
-                    target="_blank"
-                    rel="noopener noreferrer">
-                    <img className="badgee" src="src/img/google-badge.webp" alt="Google badge" />
-                  </a>
-                </div>
-              </div>
-
-              <div className="row">
-                <div className="col-5">
-                  <a
-                    href="https://www.thumbtack.com/ca/san-francisco/movers/kz2-moving-company/service/421875656061206553"
-                    target="_blank"
-                    rel="noopener noreferrer">
-                    <img
-                      className="badgee"
-                      src="src/img/thumbtack-badge.webp"
-                      alt="Thumbtack badge"
-                    />
-                  </a>
-                </div>
-                <div className="col-1"></div>
-                <div className="col-5 pb-5 mb-5 d-flex justify-content-start">
-                  <img className="arrow" src="src/img/arrow1.png" alt="an arrow" />
-                </div>
-              </div>
-
-              <div className="row">
-                <div className="col-3 pb-5 mb-5 d-flex justify-content-start">
-                  <img className="arrow" src="src/img/arrow2.png" alt="an arrow" />
-                </div>
-                <div className="col-5">
-                  <a
-                    href="https://www.chamberofcommerce.com/business-directory/california/san-francisco/mover/2023389852-kz2-moving-company?source=memberwebsite"
-                    target="_blank"
-                    rel="noopener noreferrer">
-                    <img
-                      className="badgee"
-                      src="src/img/coc-badge.webp"
-                      alt="Chamber of commerce badge"
-                    />
-                  </a>
-                </div>
-                <div className="col-4">
-                  <img className="arrow" src="src/img/arrow3.png" alt="an arrow" />
-                </div>
-              </div>
-            </div>
-            <div className="col-6 pt-5">
-              <p className="font-black text-end">
-                <b>
-                  The outstanding quality of our services helped us to build a great reputation on
-                  the Internet. Having a business from returning customers and their friends allows
-                  us to spend less on ads and keep our prices affordable
-                </b>
-              </p>
-              <br />
-              <div className="row digits-row">{renderNumberDigits(numCustomers)}</div>
-              <h1 className="text-center font-black">Happy Customers</h1>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const UsAndThemBlock = () => {
-    return (
-      <div className="wrapper">
-        <div className="d-flex flex-column align-items-center justify-content-center content-div">
-          <h4>
-            Our pricing is easy to understand and includes everything you need for a smooth move
-          </h4>
-          <div className="clipboards">
-            <img src="src/img/clipboards.webp" alt="companies comparison" className="img-fluid" />
-          </div>
         </div>
       </div>
     );
@@ -374,10 +240,8 @@ const Home: React.FC = () => {
           </div>
         </div>
         <br />
-        <GetQuoteButton />
-        <button className="custom-button-light">
-          <span className="button-text">See Prices</span>
-        </button>
+        <MyButton link="get-quote" text="Get Quote" />
+        <MyButton link="prices" text="See Prices" />
       </>
     );
 
@@ -415,10 +279,8 @@ const Home: React.FC = () => {
           {getLongCard("Phoenix", "4400")}
         </div>
         <br />
-        <GetQuoteButton />
-        <button className="custom-button-light">
-          <span className="button-text">See Prices</span>
-        </button>
+        <MyButton link="get-quote" text="Get Quote" />
+        <MyButton link="prices" text="See Prices" />
       </>
     );
 
@@ -480,9 +342,7 @@ const Home: React.FC = () => {
           require 4+ movers to handle
         </p>
         <p>To get a quote for heavy items please send us an email or give us a call</p>
-        <button className="custom-button-light">
-          <span className="button-text">See Prices</span>
-        </button>
+        <MyButton link="prices" text="See Prices" />
       </>
     );
 
@@ -509,6 +369,21 @@ const Home: React.FC = () => {
             </div>
           </div>
           {renderContent()}
+        </div>
+      </div>
+    );
+  };
+
+  const UsAndThemBlock = () => {
+    return (
+      <div className="wrapper">
+        <div className="d-flex flex-column align-items-center justify-content-center content-div">
+          <h4>
+            Our pricing is easy to understand and includes everything you need for a smooth move
+          </h4>
+          <div className="clipboards">
+            <img src="src/img/clipboards.webp" alt="companies comparison" className="img-fluid" />
+          </div>
         </div>
       </div>
     );
@@ -730,13 +605,119 @@ const Home: React.FC = () => {
     );
   };
 
+  const BadgesBlock = () => {
+    function getDaysSinceDate(targetDate: Date): number {
+      const timeDiff = new Date().getTime() - targetDate.getTime(); // Difference in milliseconds
+      const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24)); // Convert milliseconds to days
+      return daysDiff;
+    }
+
+    const numCustomers = 120 + getDaysSinceDate(new Date("2021-01-01"));
+
+    const renderNumberDigits = (number: number): React.ReactNode => {
+      const digits = number.toString().split("");
+
+      return digits.map((digit, index) => (
+        <div className="col-3" key={index}>
+          <img className="digit" src={`src/img/digits/${digit}.png`} alt={digit} />
+        </div>
+      ));
+    };
+
+    return (
+      <div className="wrapper">
+        <div className="container text-center content-div">
+          <div className="row">
+            <div className="col-6">
+              <div className="row p-3">
+                <div className="col-5">
+                  <a
+                    href="https://www.yelp.com/biz/kz2-moving-company-san-francisco"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    <img className="badgee" src="src/img/yelp-badge.webp" alt="Yelp badge" />
+                  </a>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-5 pb-5 d-flex justify-content-end">
+                  <img className="arrow" src="src/img/arrow0.png" alt="an arrow" />
+                </div>
+                <div className="col-5 pt-3">
+                  <a
+                    href="https://www.google.com/maps/place/KZ2+Moving+Company/@37.823457,-122.3681244,17.49z/data=!4m6!3m5!1s0xad28b8015c8f1f6d:0x8bcf0c6ded7cbb68!8m2!3d37.823983!4d-122.3667506!16s%2Fg%2F11j_2w01mv?entry=tts&shorturl=1"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    <img className="badgee" src="src/img/google-badge.webp" alt="Google badge" />
+                  </a>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-5">
+                  <a
+                    href="https://www.thumbtack.com/ca/san-francisco/movers/kz2-moving-company/service/421875656061206553"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    <img
+                      className="badgee"
+                      src="src/img/thumbtack-badge.webp"
+                      alt="Thumbtack badge"
+                    />
+                  </a>
+                </div>
+                <div className="col-1"></div>
+                <div className="col-5 pb-5 mb-5 d-flex justify-content-start">
+                  <img className="arrow" src="src/img/arrow1.png" alt="an arrow" />
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-3 pb-5 mb-5 d-flex justify-content-start">
+                  <img className="arrow" src="src/img/arrow2.png" alt="an arrow" />
+                </div>
+                <div className="col-5">
+                  <a
+                    href="https://www.chamberofcommerce.com/business-directory/california/san-francisco/mover/2023389852-kz2-moving-company?source=memberwebsite"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    <img
+                      className="badgee"
+                      src="src/img/coc-badge.webp"
+                      alt="Chamber of commerce badge"
+                    />
+                  </a>
+                </div>
+                <div className="col-4">
+                  <img className="arrow" src="src/img/arrow3.png" alt="an arrow" />
+                </div>
+              </div>
+            </div>
+            <div className="col-6 pt-5">
+              <p className="font-black text-end">
+                <b>
+                  The outstanding quality of our services helped us to build a great reputation on
+                  the Internet. Having a business from returning customers and their friends allows
+                  us to spend less on ads and keep our prices affordable
+                </b>
+              </p>
+              <br />
+              <div className="row digits-row">{renderNumberDigits(numCustomers)}</div>
+              <h1 className="text-center font-black">Happy Customers</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   //===================================================//
   //<BackgroundImageDiv imageUrl="src/img/bg1.webp">{<p>Some content</p>}</BackgroundImageDiv>
   return (
     <div className={isScrolled ? "scrolled-background" : ""}>
       <Base>
         <div className="bg-div">
-          <div className="empty">
+          <div className="empty-div">
             <div className="semi-transparent-div">
               <h1>KZ2 Moving Company</h1>
               <p>San Francisco and the Bay Area</p>

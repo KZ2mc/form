@@ -1,5 +1,6 @@
 import Base from "./Base";
 import "./All.css";
+import MyButton from "./MyButton";
 
 const Local: React.FC = () => {
   return (
@@ -76,12 +77,8 @@ const Local: React.FC = () => {
             </p>
           </div>
           <div className="pt-2 pb-5">
-            <button className="custom-button-light">
-              <span className="button-text">Get Quote</span>
-            </button>
-            <button className="custom-button-light">
-              <span className="button-text">Book Now</span>
-            </button>
+            <MyButton link="get-quote" text="Get Quote" />
+            <MyButton link="book" text="Book Now" />
           </div>
         </div>
       </div>

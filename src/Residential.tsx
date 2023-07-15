@@ -1,5 +1,6 @@
 import Base from "./Base";
 import "./All.css";
+import MyButton from "./MyButton";
 
 const Residential: React.FC = () => {
   return (
@@ -12,7 +13,7 @@ const Residential: React.FC = () => {
             <div className="text-center">
               <img
                 className="framed-image regular-image"
-                src="src/img/kz2-moving-company-local-moving.png"
+                src="src/img/kz2-moving-company-local-moving.webp"
                 alt="residential move"
               />
             </div>
@@ -44,12 +45,8 @@ const Residential: React.FC = () => {
             </p>
           </div>
           <div className="pt-2 pb-5">
-            <button className="custom-button-light">
-              <span className="button-text">Get Quote</span>
-            </button>
-            <button className="custom-button-light">
-              <span className="button-text">Book Now</span>
-            </button>
+            <MyButton link="get-quote" text="Get Quote" />
+            <MyButton link="book" text="Book Now" />
           </div>
         </div>
       </div>

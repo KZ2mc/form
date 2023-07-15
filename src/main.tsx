@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.css";
 import Calendar from "./components/Calendar";
 import BookingForm from "./components/BookingForm";
 import Home from "./Home";
-import "bootstrap/dist/css/bootstrap.css";
 import Services from "./Services";
 import Residential from "./Residential";
 import Commercial from "./Commercial";
@@ -22,13 +22,16 @@ import Blog_estimate_move_size from "./Blog-estimate-move-size";
 import Blog_what_to_expect from "./Blog-what-to-expect";
 import Blog_prepare_for_move from "./Blog-prepare-for-move";
 import Blog_choose_mc from "./Blog-choose-mc";
+import GetQuote from "./GetQuote";
+import Book from "./Book";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  /*<React.StrictMode>
+  <React.StrictMode>
     <Calendar year={2023} month={4} />
     <BookingForm />
   </React.StrictMode>
-  */
+
+  /*
   <React.StrictMode>
     <Router>
       <Routes>
@@ -50,7 +53,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <Route path="/blog-what-to-expect" element={<Blog_what_to_expect />} />
         <Route path="/blog-how-to-prepare" element={<Blog_prepare_for_move />} />
         <Route path="/blog-how-to-choose-moving-company" element={<Blog_choose_mc />} />
+        <Route path="/get-quote" element={<GetQuote />} />
+        <Route path="/book" element={<Book />} />
       </Routes>
     </Router>
-  </React.StrictMode>
+  </React.StrictMode>*/
 );

@@ -69,7 +69,7 @@ body {
   transition: background-color 0.3s ease; 
 }
 
-.empty {
+.empty-div {
   display: flex;
   justify-content: center;
   align-items: center;

@@ -1,6 +1,6 @@
 import React from "react";
 import { useField, useFormikContext } from "formik";
-import { FormValues, MyDateInputProps } from "./FormInterfaces.tsx";
+import { FormValues, MyDateInputProps } from "./Interfaces.tsx";
 
 const currentDate = new Date();
 const minDate = currentDate.toISOString().split("T")[0];
@@ -23,7 +23,7 @@ const MyDateInput: React.FC<MyDateInputProps> = ({ name, label, ...props }) => {
 
   return (
     <>
-      <div className="col-md-3">
+      <div className={props.quote ? "col" : "col-md-3"}>
         <label htmlFor={props.id || name} className="d-flex flex-column text-center">
           {label}
           {props.optional && (
@@ -31,7 +31,7 @@ const MyDateInput: React.FC<MyDateInputProps> = ({ name, label, ...props }) => {
           )}
         </label>
       </div>
-      <div className="col-md-4 col-6">
+      <div className={props.quote ? "col" : "col-md-4 col-6"}>
         <input
           type="date"
           id={props.id || name}

@@ -29,6 +29,10 @@ hr {
     margin: 20px 0; /* Add some margin to create spacing around the divider */
   }
 
+.p-naked {
+    margin: 0;
+    padding: 0;
+}
 
 @media (min-width: 600px) {
 /* CSS rules for screens with a minimum width of xxx px */
@@ -100,7 +104,8 @@ hr {
     width: 60%;
 }
 
-.custom-button-light{
+.custom-button {
+    min-width: 140px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -110,43 +115,46 @@ hr {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 30px;
     border: none;
     cursor: pointer;
+    
     transition: background-image 0.5s ease;
-  
+    
     &:hover {
-      background-image: url('src/img/custom-btn-hover.png');
-    }
-  
-    &:active {
-      background-image: url('src/img/custom-btn-press.png');
-    }
+        background-image: url('src/img/custom-btn-hover.png');
+      }
+    
+      &:active {
+        background-image: url('src/img/custom-btn-press.png');
+      }
+}
+
+.btn-dark {
+    background-image: url('src/img/custom-btn-dark.png');
+    
+    &:hover {
+        background-image: url('src/img/custom-btn-dark-hover.png');
+      }
+    
+      &:active {
+        background-image: url('src/img/custom-btn-dark-press.png');
+      }
 }
 
 .button-text {
-    color: black;
+    color: #412C28;
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     font-size: 18px;
 }
-  
-.custom-button {
-    background-color: #f5f5f5;
-    color: #333;
-    border: 1px solid #333;
-    padding: 10px 20px;
-    font-size: 14px;
-    cursor: pointer;
-}
-  
-.custom-button:hover {
-    background-color: #333;
-    color: #fff;
-}
 
 .link-orange {
     font-size: 20px;
-    color: #FFB600;
+    color: #E78B01;
     text-decoration: none;
     font-weight: bold;
   }
@@ -155,5 +163,36 @@ hr {
     color: rgb(255, 133, 4);
 }
 
+.card-container {
+    font-size: 14px;
+    padding: 20px 100px;
+    margin: 15px 7px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    background-color:rgb(230, 239, 250);
+    color:rgb(48, 95, 206);
+  }
 
+
+
+  .estimated-total {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .estimated-total p {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .separator {
+    margin: 0 5px;
+  }
+  
+  .spacer {
+    flex-grow: 1;
+  }
+  
   

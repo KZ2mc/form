@@ -1,6 +1,19 @@
 import Base from "./Base";
 import "./All.css";
 import "./Prices.css";
+import MyButton from "./MyButton";
+import {
+  BASE_RATE,
+  STAIR_CHARGE,
+  OTHER_HEAVY_ITEM_CHARGE,
+  PIANO_W_MOVE_CHARGE,
+  PIANO_CHARGE,
+  CARD_RATE_INCREASE,
+  MOVER_COST,
+  SUMMER_RATE_INCREASE,
+  GUN_SAFE_ROLLABLE,
+  GUN_SAFE,
+} from "./components/Rates.tsx";
 
 const Prices: React.FC = () => {
   const Divider: React.FC = () => {
@@ -81,16 +94,24 @@ const Prices: React.FC = () => {
                 <h5>Low-season rates (October - April):</h5>
                 <ul style={{ listStyle: "none", padding: 0 }}>
                   <li>
-                    <p className="m-1 py-0 px-5">2 movers - $109/129 per hour (cash/card)</p>
+                    <p className="m-1 py-0 px-5">
+                      2 movers - ${BASE_RATE}/{BASE_RATE + CARD_RATE_INCREASE} per hour (cash/card)
+                    </p>
                   </li>
                   <li>
-                    <p className="m-1 py-0 px-5">3 movers - $149/169 per hour (cash/card)</p>
+                    <p className="m-1 py-0 px-5">
+                      3 movers - ${BASE_RATE + MOVER_COST}/
+                      {BASE_RATE + MOVER_COST + CARD_RATE_INCREASE} per hour (cash/card)
+                    </p>
                   </li>
                   <li>
-                    <p className="m-1 py-0 px-5">4 movers - $189/209 per hour (cash/card)</p>
+                    <p className="m-1 py-0 px-5">
+                      4 movers - ${BASE_RATE + MOVER_COST * 2}/
+                      {BASE_RATE + MOVER_COST * 2 + CARD_RATE_INCREASE} per hour (cash/card)
+                    </p>
                   </li>
                   <li>
-                    <p className="m-1 py-0 px-5">Every additional mover + $40/hr</p>
+                    <p className="m-1 py-0 px-5">Every additional mover + ${MOVER_COST}/hr</p>
                   </li>
                 </ul>
               </div>
@@ -98,16 +119,27 @@ const Prices: React.FC = () => {
                 <h5>High-season rates (May - September):</h5>
                 <ul style={{ listStyle: "none", padding: 0 }}>
                   <li>
-                    <p className="m-1 py-0 px-5">2 movers - $119/139 per hour (cash/card)</p>
+                    <p className="m-1 py-0 px-5">
+                      2 movers - ${BASE_RATE + SUMMER_RATE_INCREASE}/
+                      {BASE_RATE + SUMMER_RATE_INCREASE + CARD_RATE_INCREASE} per hour (cash/card)
+                    </p>
                   </li>
                   <li>
-                    <p className="m-1 py-0 px-5">3 movers - $159/179 per hour (cash/card)</p>
+                    <p className="m-1 py-0 px-5">
+                      3 movers - ${BASE_RATE + SUMMER_RATE_INCREASE + MOVER_COST}/
+                      {BASE_RATE + SUMMER_RATE_INCREASE + CARD_RATE_INCREASE + MOVER_COST} per hour
+                      (cash/card)
+                    </p>
                   </li>
                   <li>
-                    <p className="m-1 py-0 px-5">4 movers - $199/219 per hour (cash/card)</p>
+                    <p className="m-1 py-0 px-5">
+                      4 movers - ${BASE_RATE + SUMMER_RATE_INCREASE + MOVER_COST * 2}/
+                      {BASE_RATE + SUMMER_RATE_INCREASE + CARD_RATE_INCREASE + MOVER_COST * 2} per
+                      hour (cash/card)
+                    </p>
                   </li>
                   <li>
-                    <p className="m-1 py-0 px-5">Every additional mover + $40/hr</p>
+                    <p className="m-1 py-0 px-5">Every additional mover + ${MOVER_COST}/hr</p>
                   </li>
                 </ul>
                 <p>
@@ -168,9 +200,7 @@ const Prices: React.FC = () => {
                 </p>
               </div>
               <div className="text-center">
-                <button className="custom-button-light">
-                  <span className="button-text">Get Quote</span>
-                </button>
+                <MyButton link="get-quote" text="Get Quote" />
               </div>
             </section>
 
@@ -190,9 +220,7 @@ const Prices: React.FC = () => {
                 cost. The final flat price is determined after an on-site or virtual estimate.
               </p>
               <div className="text-center">
-                <button className="custom-button-light">
-                  <span className="button-text">Get Quote</span>
-                </button>
+                <MyButton link="get-quote" text="Get Quote" />
               </div>
             </section>
 
@@ -210,25 +238,33 @@ const Prices: React.FC = () => {
                 Couches, sofas, mattresses, TVs up to 100", regular dining tables, and dressers are
                 NOT charged extra
               </p>
-              <p className="m-1 pt-3 px-5">Piano moving - $400 + $10/stairstep</p>
-              <p className="m-1 py-0 px-5">
-                Large gun safe moving - $200 if can be rolled or $500 + $10/stairstep if has to be
-                carried
+              <p className="m-1 pt-3 px-5">
+                Piano moving as part of a move - ${PIANO_W_MOVE_CHARGE} + ${STAIR_CHARGE}/stair step
               </p>
               <p className="m-1 py-0 px-5">
-                Heavy treadmill moving - $100 + $10/stairstep. Can be waived if item can be rolled
+                Piano ONLY moving - ${PIANO_CHARGE} + ${STAIR_CHARGE}/stair step + $50 every 10
+                miles after the first 10 miles
+              </p>
+              <p className="m-1 py-0 px-5">
+                Large gun safe moving - ${GUN_SAFE_ROLLABLE} if can be rolled or ${GUN_SAFE} + $
+                {STAIR_CHARGE}/stair step if has to be carried
+              </p>
+              <p className="m-1 py-0 px-5">
+                Heavy treadmill moving - ${OTHER_HEAVY_ITEM_CHARGE} + ${STAIR_CHARGE}/stair step.
+                Can be waived if item can be rolled
               </p>
               <p className="m-1 py-0 px-5">
                 Other extra heavy and extra large items discussed individually
               </p>
               <p className="m-1 pt-3">
                 To get a quote, please email us at{" "}
-                <a className="link-white" href="mailto:info@kz2movingcompany.com">
+                <a className="link-orange" href="mailto:info@kz2movingcompany.com">
                   info@kz2movingcompany.com
-                </a>{" "}
+                </a>
+                <br />
                 or give us a call at{" "}
-                <a className="link-white" href="tel:+14152282226">
-                  415-228-2228
+                <a className="link-orange" href="tel:+14152282226">
+                  415-228-2226
                 </a>
               </p>
             </section>
@@ -246,12 +282,8 @@ const Prices: React.FC = () => {
           </div>
 
           <div className="pt-2 pb-5">
-            <button className="custom-button-light">
-              <span className="button-text">Get Quote</span>
-            </button>
-            <button className="custom-button-light">
-              <span className="button-text">Book Now</span>
-            </button>
+            <MyButton link="get-quote" text="Get Quote" />
+            <MyButton link="book" text="Book Now" />
           </div>
         </div>
       </div>

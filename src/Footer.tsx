@@ -162,6 +162,9 @@ const Footer: React.FC = () => {
             </ul>
           </div>
         </div>
+        <p className="small mb-0 pb-2" style={{ color: "white" }}>
+          ©2020 by KZ2 Moving Company LLC
+        </p>
       </div>
     </footer>
   );

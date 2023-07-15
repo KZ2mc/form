@@ -1,6 +1,6 @@
 import React from "react";
 import { useField } from "formik";
-import { MyCheckboxProps } from "./FormInterfaces.tsx"; // Import your custom types/interfaces
+import { MyCheckboxProps } from "./Interfaces.tsx"; // Import your custom types/interfaces
 
 const MyCheckbox: React.FC<MyCheckboxProps> = ({ children, addfunc, req, wrap, ...props }) => {
   // React treats radios and checkbox inputs differently from other input types: select and textarea.

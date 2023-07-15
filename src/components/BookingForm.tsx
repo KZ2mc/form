@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Formik, Form, useField, useFormikContext } from "formik";
 import { Button, Modal } from "react-bootstrap";
-import { Element, scroller } from "react-scroll";
+import { Element } from "react-scroll";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import HelpIcon from "./HelpIcon.tsx";
@@ -15,7 +15,7 @@ import MyCheckbox from "./MyCheckbox.tsx";
 import MySelect from "./MySelect.tsx";
 import MyAddressBlock from "./MyAddressBlock.tsx";
 import MyDateAndTimeBlock from "./MyDateAndTimeBlock.tsx";
-import { FormValues } from "./FormInterfaces.tsx";
+import { FormValues } from "./Interfaces.tsx";
 
 const addressValidationApiURL = "https://api.kz2movingcompany.com:8443/validate_address";
 const formSubmissionApiURL = "https://api.kz2movingcompany.com:8443/form_submission";
@@ -111,8 +111,7 @@ const FormWFormik: React.FC = () => {
       packing: values.packing,
       selectedHeavyItems: values.selectedHeavyItems,
       inputHeavyDetails: values.inputHeavyDetails,
-      defaultMovers: values.defaultMovers,
-      selectedMovers: values.defaultMovers ? "" : values.selectedMovers,
+      selectedMovers: values.selectedMovers,
       date1: values.date1,
       timeSlot1: values.timeSlot1,
       evnTime1: evnTimeFlag1 ? values.evnTime1.toLocaleTimeString([], timeFormatOptions) : "",
@@ -319,7 +318,7 @@ const FormWFormik: React.FC = () => {
   };
 
   // Components:
-  const Header = () => {
+  const Heading = () => {
     return (
       <div key="header">
         <div className="text-center">
@@ -536,7 +535,9 @@ const FormWFormik: React.FC = () => {
                 <option key="Medium Storage" value="Medium Storage">
                   Medium Storage
                 </option>
-                <option key="Large Storage" value="Large Storage"></option>
+                <option key="Large Storage" value="Large Storage">
+                  Large Storage
+                </option>
                 <option key="Office" value="Office">
                   Office
                 </option>
@@ -677,39 +678,32 @@ const FormWFormik: React.FC = () => {
     return (
       <div key="num-movers-key" id="num-movers-selector">
         <br />
-        <label className="d-flex form-check-label fw-bold" htmlFor="defaultMovers">
+        <label className="d-flex form-check-label fw-bold pb-1" htmlFor="selectedMovers">
           Number of movers:
         </label>
-        <div className="d-flex col">
-          <MyCheckbox name="defaultMovers" wrap={true}>
-            Let KZ2 decide the most suitable team-size (Recommended)
-          </MyCheckbox>
-        </div>
-        {!values.defaultMovers && (
-          <MySelect addclassname="col" name="selectedMovers">
-            <option key="movers-placeholder" value="" disabled>
-              How many movers do you need...
-            </option>
-            <option key="movers-2" value="2 movers">
-              2 movers {recomMovers === 2 ? "(Recommended)" : ""}
-            </option>
-            <option key="movers-3" value="3 movers">
-              3 movers {recomMovers === 3 ? "(Recommended)" : ""}
-            </option>
-            <option key="movers-4" value="4 movers">
-              4 movers {recomMovers === 4 ? "(Recommended)" : ""}
-            </option>
-            <option key="movers-5" value="5 movers">
-              5 movers {recomMovers === 5 ? "(Recommended)" : ""}
-            </option>
-            <option key="movers-6" value="6 movers">
-              6 movers {recomMovers === 6 ? "(Recommended)" : ""}
-            </option>
-            <option key="movers-custom" value="Custom">
-              I will specify at the end of the form
-            </option>
-          </MySelect>
-        )}
+        <MySelect addclassname="col" name="selectedMovers">
+          <option key="movers-placeholder" value="" disabled>
+            How many movers do you need...
+          </option>
+          <option key="movers-2" value="2 movers">
+            2 movers {recomMovers === 2 ? "(Recommended)" : ""}
+          </option>
+          <option key="movers-3" value="3 movers">
+            3 movers {recomMovers === 3 ? "(Recommended)" : ""}
+          </option>
+          <option key="movers-4" value="4 movers">
+            4 movers {recomMovers === 4 ? "(Recommended)" : ""}
+          </option>
+          <option key="movers-5" value="5 movers">
+            5 movers {recomMovers === 5 ? "(Recommended)" : ""}
+          </option>
+          <option key="movers-6" value="6 movers">
+            6 movers {recomMovers === 6 ? "(Recommended)" : ""}
+          </option>
+          <option key="movers-custom" value="Custom">
+            I will specify at the end of the form
+          </option>
+        </MySelect>
       </div>
     );
   };
@@ -1008,7 +1002,6 @@ const FormWFormik: React.FC = () => {
     otherHeavyItem: false,
     selectedHeavyItems: [],
     inputHeavyDetails: "",
-    defaultMovers: true,
     selectedMovers: "2 movers",
 
     date1: "",
@@ -1097,7 +1090,7 @@ const FormWFormik: React.FC = () => {
           validationSchema={validationSchema}
           onSubmit={onSubmit}>
           <Form>
-            <Header />
+            <Heading />
             <NameBlock />
             <EmailAndPhoneBlock />
             <PickupBlock />

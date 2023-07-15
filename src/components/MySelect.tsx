@@ -1,6 +1,6 @@
 import React from "react";
 import { useField } from "formik";
-import { MySelectProps } from "./FormInterfaces.tsx";
+import { MySelectProps } from "./Interfaces.tsx";
 
 const MySelect: React.FC<MySelectProps> = ({ addfunc, ...props }) => {
   const [field, meta] = useField(props);

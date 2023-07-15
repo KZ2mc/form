@@ -1,6 +1,6 @@
 import React from "react";
 import { useField, useFormikContext } from "formik";
-import { MyTextInputProps, FormValues } from "./FormInterfaces.tsx";
+import { MyTextInputProps, FormValues } from "./Interfaces.tsx";
 
 const MyTextInput: React.FC<MyTextInputProps> = ({ addfunc, ...props }) => {
   const [field, meta] = useField(props);

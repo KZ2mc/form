@@ -1,5 +1,6 @@
 import Base from "./Base";
 import "./All.css";
+import MyButton from "./MyButton";
 
 const Commercial: React.FC = () => {
   return (
@@ -31,7 +32,7 @@ const Commercial: React.FC = () => {
             <div className="text-center">
               <img
                 className="framed-image regular-image"
-                src="src/img/kz2-moving-company-commercial-move.png"
+                src="src/img/kz2-moving-company-commercial-move.webp"
                 alt="commercial move"
               />
             </div>
@@ -62,7 +63,7 @@ const Commercial: React.FC = () => {
             <div className="text-center">
               <img
                 className="framed-image regular-image"
-                src="src/img/kz2-moving-company-commercial-moving.png"
+                src="src/img/kz2-moving-company-commercial-moving.webp"
                 alt="office moving"
               />
             </div>
@@ -109,12 +110,8 @@ const Commercial: React.FC = () => {
             </p>
           </div>
           <div className="pt-2 pb-5">
-            <button className="custom-button-light">
-              <span className="button-text">Get Quote</span>
-            </button>
-            <button className="custom-button-light">
-              <span className="button-text">Book Now</span>
-            </button>
+            <MyButton link="get-quote" text="Get Quote" />
+            <MyButton link="book" text="Book Now" />
           </div>
         </div>
       </div>

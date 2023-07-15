@@ -5,7 +5,7 @@ import MySelect from "./MySelect.tsx";
 import MyCheckbox from "./MyCheckbox.tsx";
 import HelpIcon from "./HelpIcon.tsx";
 import states from "states-us";
-import { FormValues, MyAddressBlockProps } from "./FormInterfaces.tsx";
+import { FormValues, MyAddressBlockProps } from "./Interfaces.tsx";
 
 const MyAddressBlock: React.FC<MyAddressBlockProps> = ({ location, ...props }) => {
   const { setFieldValue } = useFormikContext<FormValues>();

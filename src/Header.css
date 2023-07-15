@@ -2,7 +2,7 @@
     z-index: 99;
 }
 
-.header.fixed {
+.header.fixed {  
     position: fixed;
     top: 0;
     left: 0;
@@ -11,6 +11,10 @@
 }
 
 .header-container {
+    padding-left: 50px !important;
+    padding-right: 20px !important;
+    border-radius: 50px;
+
     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
     z-index: 99;
 }
@@ -28,10 +32,15 @@
 
 .logo {
     position: absolute;
-    margin-left: -20rem;
 }
 
 .logo-container {
+    left: -10px;
+    display: flex;
+    z-index: 100;
+}
+
+.logo-container-original {
     position: absolute;
     top: 0;
     left: 50%;
